@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Les mots qui comptent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+</head>
+
+<body>
+
+    <!-- ── Header ── -->
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="header-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    aria-hidden="true">
+                    <path
+                        d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" />
+                    <path
+                        d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
+                </svg>
+                Citations du jour
+            </div>
+            <h1 class="site-title">Les mots qui comptent</h1>
+            <p class="site-subtitle">Votez pour vos citations préférées — de nouvelles pensées chaque jour.</p>
+            <div class="date-pill">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    aria-hidden="true">
+                    <rect x="3" y="4" width="18" height="18" rx="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+                <span id="today-date"></span>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- ── Main content ── -->
+    <main class="content">
+
+        <!-- Tab : Explorer -->
+        <section id="tab-explorer" role="tabpanel" aria-labelledby="btn-explorer" hidden>
+            <div class="explorer-top-row">
+                <p class="section-label" style="margin-bottom:0">Toutes les citations</p>
+                <button class="surprise-btn" onclick="openSurpriseModal()" aria-label="Citation aléatoire">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        aria-hidden="true">
+                        <polyline points="16 3 21 3 21 8" />
+                        <line x1="4" y1="20" x2="21" y2="3" />
+                        <polyline points="21 16 21 21 16 21" />
+                        <line x1="15" y1="15" x2="21" y2="21" />
+                    </svg>
+                    Surprenez-moi
+                </button>
+            </div>
+
+            <!-- Barre de recherche -->
+            <div class="explorer-search-wrap">
+                <svg class="explorer-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input type="search" class="explorer-search" id="explorer-search"
+                    placeholder="Chercher un auteur, une citation…" oninput="handleExplorerFilter()"
+                    aria-label="Rechercher" />
+            </div>
+
+            <!-- Filtres -->
+            <div class="explorer-filters" id="explorer-filters">
+
+                <!-- Filtre Catégorie -->
+                <div class="filter-group">
+                    <p class="filter-group-label">Catégorie</p>
+                    <div class="filter-chips" id="filter-cats"></div>
+                </div>
+
+                <!-- Filtre Auteur -->
+                <div class="filter-group">
+                    <p class="filter-group-label">Auteur</p>
+                    <div class="filter-chips" id="filter-authors"></div>
+                </div>
+
+                <!-- Filtre Époque -->
+                <div class="filter-group">
+                    <p class="filter-group-label">Époque</p>
+                    <div class="filter-chips" id="filter-eras"></div>
+                </div>
+
+            </div>
+
+            <!-- Compteur de résultats + tri -->
+            <div class="explorer-toolbar">
+                <span class="explorer-count" id="explorer-count">— citations</span>
+                <div class="explorer-sort-wrap">
+                    <label class="filter-group-label" for="explorer-sort" style="margin:0">Trier par</label>
+                    <select class="explorer-sort" id="explorer-sort" onchange="handleExplorerFilter()">
+                        <option value="score">Score</option>
+                        <option value="author">Auteur A→Z</option>
+                        <option value="era">Époque</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Résultats -->
+            <div id="explorer-cards" class="cards-list"></div>
+        </section>
+
+        <!-- Tab : Aujourd'hui -->
+        <section id="tab-today" role="tabpanel" aria-labelledby="btn-today">
+            <p class="section-label">Citations du <span id="today-label"></span></p>
+            <div id="today-cards" class="cards-list"></div>
+        </section>
+
+        <!-- Tab : Top classement -->
+        <section id="tab-top" role="tabpanel" aria-labelledby="btn-top" hidden>
+            <p class="section-label">Meilleures citations — tous les temps</p>
+            <div id="top-cards" class="cards-list"></div>
+        </section>
+
+        <!-- Tab : Statistiques -->
+        <section id="tab-stats" role="tabpanel" aria-labelledby="btn-stats" hidden>
+            <p class="section-label">Votre activité</p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Votes donnés</span>
+                    <span class="stat-value" id="s-votes">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Citations vues</span>
+                    <span class="stat-value" id="s-seen">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Jours consécutifs</span>
+                    <span class="stat-value" id="s-streak">1</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Catégorie favorite</span>
+                    <span class="stat-value" id="s-fav">—</span>
+                </div>
+            </div>
+            <p class="section-label" style="margin-top: 2rem;">Citations que vous avez aimées</p>
+            <div id="liked-cards" class="cards-list"></div>
+        </section>
+
+        <!-- Tab : Soumettre une citation -->
+        <section id="tab-submit" role="tabpanel" aria-labelledby="btn-submit" hidden>
+            <p class="section-label">Proposer une citation</p>
+
+            <!-- Formulaire -->
+            <div class="submit-form" id="submit-form">
+                <div class="field-group">
+                    <label class="field-label" for="input-text">Citation <span class="required">*</span></label>
+                    <textarea id="input-text" class="field-input field-textarea"
+                        placeholder="Saisissez le texte de la citation…" rows="4" maxlength="400"></textarea>
+                    <span class="char-counter"><span id="char-count">0</span> / 400</span>
+                </div>
+
+                <div class="field-row">
+                    <div class="field-group">
+                        <label class="field-label" for="input-author">Auteur <span class="required">*</span></label>
+                        <input id="input-author" class="field-input" type="text" placeholder="Ex : Albert Camus"
+                            maxlength="80" />
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="input-era">Époque / titre <span
+                                class="optional">(facultatif)</span></label>
+                        <input id="input-era" class="field-input" type="text" placeholder="Ex : Écrivain, 1913–1960"
+                            maxlength="80" />
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label" for="input-cat">Catégorie <span class="required">*</span></label>
+                    <select id="input-cat" class="field-input field-select">
+                        <option value="">— Choisir —</option>
+                        <option>Sagesse</option>
+                        <option>Inspiration</option>
+                        <option>Courage</option>
+                        <option>Résilience</option>
+                        <option>Philosophie</option>
+                        <option>Créativité</option>
+                        <option>Action</option>
+                        <option>Travail</option>
+                        <option>Bonheur</option>
+                        <option>Humour</option>
+                        <option>Amour</option>
+                        <option>Autre</option>
+                    </select>
+                </div>
+
+                <div id="submit-error" class="submit-error" hidden></div>
+
+                <button class="submit-btn" onclick="handleSubmit()">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        aria-hidden="true">
+                        <line x1="22" y1="2" x2="11" y2="13" />
+                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                    </svg>
+                    Envoyer ma citation
+                </button>
+            </div>
+
+            <!-- Confirmation -->
+            <div class="submit-success" id="submit-success" hidden>
+                <div class="success-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        aria-hidden="true">
+                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                </div>
+                <h2 class="success-title">Citation envoyée !</h2>
+                <p class="success-msg">Merci pour votre contribution. Elle a été ajoutée à votre liste de soumissions.
+                </p>
+                <button class="submit-btn" style="margin-top:1.5rem" onclick="resetSubmitForm()">
+                    Soumettre une autre citation
+                </button>
+            </div>
+
+        </section>
+
+        <!-- Tab : Admin ──────────────────────────────────────────────────── -->
+        <section id="tab-admin" role="tabpanel" aria-labelledby="btn-admin" hidden>
+
+            <!-- Écran de connexion -->
+            <div id="admin-login-screen">
+                <div style="max-width:360px;margin:3rem auto;text-align:center">
+                    <div style="font-size:40px;margin-bottom:1rem">🔒</div>
+                    <h2 style="font-family:var(--font-display);font-size:22px;margin-bottom:.5rem">Espace administration
+                    </h2>
+                    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:1.5rem">Entrez le mot de passe
+                        pour accéder au panneau.</p>
+                    <input id="admin-password-input" type="password" class="field-input" placeholder="Mot de passe…"
+                        style="margin-bottom:.75rem;text-align:center" />
+                    <div id="admin-password-error" style="color:var(--danger);font-size:13px;margin-bottom:.75rem"
+                        hidden></div>
+                    <button class="submit-btn" onclick="checkAdminPassword()" style="width:100%">
+                        Accéder →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard admin : formulaire de publication -->
+            <div id="admin-dashboard" hidden>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
+                    <p class="section-label" style="margin-bottom:0">Publier une nouvelle citation</p>
+                    <button onclick="adminLogout()" style="
+                        display:inline-flex;align-items:center;gap:6px;
+                        font-size:13px;font-weight:500;
+                        color:var(--text-secondary);
+                        background:var(--bg-subtle);
+                        border:1px solid var(--border-medium);
+                        border-radius:var(--radius-full);
+                        padding:6px 14px;cursor:pointer;
+                        transition:color var(--transition),background var(--transition);
+                    " onmouseover="this.style.color='var(--danger)';this.style.background='var(--danger-light)';this.style.borderColor='var(--danger)'"
+                        onmouseout="this.style.color='var(--text-secondary)';this.style.background='var(--bg-subtle)';this.style.borderColor='var(--border-medium)'"
+                        aria-label="Se déconnecter">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" aria-hidden="true">
+                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                            <polyline points="16 17 21 12 16 7" />
+                            <line x1="21" y1="12" x2="9" y2="12" />
+                        </svg>
+                        Se déconnecter
+                    </button>
+                </div>
+
+                <div class="submit-form" id="admin-publish-form">
+
+                    <div class="field-group">
+                        <label class="field-label" for="admin-input-text">Citation <span
+                                class="required">*</span></label>
+                        <textarea id="admin-input-text" class="field-input field-textarea"
+                            placeholder="Saisissez le texte de la citation…" rows="4" maxlength="400"
+                            oninput="document.getElementById('admin-char-count').textContent=this.value.length"></textarea>
+                        <span class="char-counter"><span id="admin-char-count">0</span> / 400</span>
+                    </div>
+
+                    <div class="field-group">
+                        <label class="field-label" for="admin-input-text-en">Traduction anglaise <span
+                                class="optional">(facultatif)</span></label>
+                        <textarea id="admin-input-text-en" class="field-input field-textarea"
+                            placeholder="Version originale en anglais…" rows="3" maxlength="400"></textarea>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label class="field-label" for="admin-input-author">Auteur <span
+                                    class="required">*</span></label>
+                            <input id="admin-input-author" class="field-input" type="text"
+                                placeholder="Ex : Albert Camus" maxlength="80" />
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label" for="admin-input-era">Époque / titre <span
+                                    class="optional">(facultatif)</span></label>
+                            <input id="admin-input-era" class="field-input" type="text"
+                                placeholder="Ex : Écrivain, 1913–1960" maxlength="80" />
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label class="field-label" for="admin-input-cat">Catégorie <span
+                                    class="required">*</span></label>
+                            <select id="admin-input-cat" class="field-input field-select">
+                                <option value="">— Choisir —</option>
+                                <option>Sagesse</option>
+                                <option>Inspiration</option>
+                                <option>Courage</option>
+                                <option>Résilience</option>
+                                <option>Philosophie</option>
+                                <option>Créativité</option>
+                                <option>Action</option>
+                                <option>Travail</option>
+                                <option>Bonheur</option>
+                                <option>Humour</option>
+                                <option>Amour</option>
+                                <option>Autre</option>
+                            </select>
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label" for="admin-input-day">Jour d'affichage <span
+                                    class="required">*</span></label>
+                            <input id="admin-input-day" class="field-input" type="number" min="0"
+                                placeholder="Ex : 15" />
+                            <span style="font-size:11px;color:var(--text-tertiary);margin-top:4px;display:block">Dernier
+                                jour utilisé : <strong id="admin-last-day">—</strong></span>
+                        </div>
+                    </div>
+
+                    <div id="admin-publish-error" class="submit-error" hidden></div>
+
+                    <button class="submit-btn" onclick="handleAdminPublish()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" aria-hidden="true">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                        Générer le bloc data.js
+                    </button>
+                </div>
+
+                <!-- Résultat à copier -->
+                <div id="admin-publish-result" hidden style="margin-top:1.5rem">
+                    <p class="section-label">Bloc à copier dans data.js</p>
+                    <div style="position:relative">
+                        <pre id="admin-code-output" style="
+                            background:var(--bg-subtle);
+                            border:1px solid var(--border-medium);
+                            border-radius:var(--radius-md);
+                            padding:1rem 1.25rem;
+                            font-size:13px;
+                            line-height:1.7;
+                            overflow-x:auto;
+                            white-space:pre;
+                            color:var(--text-primary);
+                        "></pre>
+                        <button onclick="adminCopyCode()" style="
+                            position:absolute;top:10px;right:10px;
+                            font-size:12px;font-weight:500;
+                            color:var(--accent);
+                            background:var(--bg-surface);
+                            border:1px solid var(--border-medium);
+                            border-radius:var(--radius-sm);
+                            padding:4px 12px;cursor:pointer;
+                        " id="admin-copy-btn">Copier</button>
+                    </div>
+                    <p style="font-size:13px;color:var(--text-secondary);margin-top:.75rem;line-height:1.6">
+                        Colle ce bloc dans <code
+                            style="background:var(--bg-subtle);padding:1px 6px;border-radius:4px">js/data.js</code>,
+                        à l'intérieur du tableau <code
+                            style="background:var(--bg-subtle);padding:1px 6px;border-radius:4px">ALL_QUOTES</code>,
+                        après la dernière citation existante.
+                    </p>
+                    <button class="submit-btn"
+                        style="margin-top:1rem;background:var(--bg-subtle);color:var(--text-primary);border:1px solid var(--border-medium)"
+                        onclick="resetAdminPublishForm()">
+                        Nouvelle citation
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab : À propos -->
+        <section id="tab-about" role="tabpanel" aria-labelledby="btn-about" hidden>
+
+            <!-- Hero -->
+            <div class="about-hero">
+                <div class="about-avatar">DC</div>
+                <div>
+                    <h2 class="about-name">Dylann Chaffot</h2>
+                    <p class="about-role">Concepteur &amp; développeur du projet</p>
+                </div>
+            </div>
+
+            <!-- Histoire -->
+            <div class="about-block">
+                <div class="about-block-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        aria-hidden="true">
+                        <path
+                            d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="about-block-title">L'histoire du projet</h3>
+                    <p class="about-block-text">
+                        Tout a commencé un soir d'hiver, dans un moment de doute profond. Dylann traversait une période
+                        difficile — ces instants où l'on ne sait plus très bien dans quelle direction aller. En
+                        cherchant un peu de lumière, il tombe sur une phrase de Sénèque, presque par hasard, au détour
+                        d'une vieille page web oubliée. Ces quelques mots l'ont arrêté net. Ils ont mis des mots sur ce
+                        qu'il ressentait sans pouvoir l'exprimer.
+                    </p>
+                    <p class="about-block-text" style="margin-top:.75rem">
+                        C'est ce soir-là que l'idée est née : et si on créait un endroit simple, beau, où les mots des
+                        grands penseurs étaient là chaque jour, accessibles à tous, sans bruit, sans distraction ? Un
+                        espace pour souffler, réfléchir, et repartir avec une pensée en poche.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Inspirations -->
+            <div class="about-block">
+                <div class="about-block-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        aria-hidden="true">
+                        <polygon
+                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="about-block-title">Les inspirations</h3>
+                    <p class="about-block-text">
+                        Dylann a toujours été fasciné par la puissance des mots. Les philosophes stoïciens — Marc
+                        Aurèle, Épictète, Sénèque — ont été ses premiers compagnons de route. Leur manière de parler de
+                        la vie avec une clarté presque brutale, mais toujours bienveillante, l'a profondément marqué.
+                    </p>
+                    <p class="about-block-text" style="margin-top:.75rem">
+                        Il s'est aussi inspiré des journaux intimes, de ces carnets de citations que certaines personnes
+                        tiennent toute leur vie et qu'on retrouve après leur mort, remplis de phrases soulignées. L'idée
+                        de rendre ça vivant, interactif, partageable — c'est ce qui a donné naissance à <em>Les mots qui
+                            comptent</em>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Philosophie -->
+            <div class="about-block">
+                <div class="about-block-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        aria-hidden="true">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="about-block-title">La philosophie du site</h3>
+                    <p class="about-block-text">
+                        Pas d'algorithme qui cherche à t'accrocher, pas de notifications, pas de flux infini. Juste
+                        quatre citations par jour — ni plus, ni moins. Assez pour nourrir une réflexion, pas assez pour
+                        noyer l'attention. Le vote n'est pas là pour créer de la compétition, mais pour que chacun trace
+                        sa propre carte des pensées qui le touchent.
+                    </p>
+                    <p class="about-block-text" style="margin-top:.75rem">
+                        Dylann croit que les grandes idées méritent d'être lues lentement, relues, portées avec soi dans
+                        sa journée. Ce site est sa façon de partager cette conviction.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Citation personnelle -->
+            <div class="about-quote-block">
+                <p class="about-quote">"J'ai créé ce site pour la personne que j'étais ce soir d'hiver — et pour tous
+                    ceux qui, un jour ou l'autre, ont besoin de trouver les bons mots."</p>
+                <span class="about-quote-sig">— Dylann Chaffot</span>
+            </div>
+
+            <!-- Contact -->
+            <div class="about-block about-contact">
+                <div class="about-block-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        aria-hidden="true">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <polyline points="22,6 12,13 2,6" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="about-block-title">Une idée ? Une citation à proposer ?</h3>
+                    <p class="about-block-text">
+                        Ce projet est vivant et évolue avec ceux qui le lisent. Si une citation vous a changé la vie et
+                        que vous voulez la partager, utilisez l'onglet <strong>Soumettre</strong> — chaque contribution
+                        compte.
+                    </p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/data.js"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/render.js"></script>
+    <script src="js/submit.js"></script>
+    <script src="js/explorer.js"></script>
+    <script src="js/features.js"></script>
+    <script src="js/imagecard.js"></script>
+    <script src="js/surprise.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/app.js"></script>
+
+    <!-- ── Modale "Surprenez-moi" ── -->
+    <div id="surprise-overlay" class="panel-overlay" onclick="closeSurpriseModal()" hidden></div>
+    <div id="surprise-modal" class="surprise-modal" hidden role="dialog" aria-modal="true"
+        aria-labelledby="surprise-modal-title">
+        <div class="surprise-modal-inner">
+            <!-- Header -->
+            <div class="surprise-modal-header">
+                <span class="surprise-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        aria-hidden="true">
+                        <polyline points="16 3 21 3 21 8" />
+                        <line x1="4" y1="20" x2="21" y2="3" />
+                        <polyline points="21 16 21 21 16 21" />
+                        <line x1="15" y1="15" x2="21" y2="21" />
+                    </svg>
+                    Citation aléatoire
+                </span>
+                <button class="ap-close-btn" onclick="closeSurpriseModal()" aria-label="Fermer">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Contenu de la citation -->
+            <div id="surprise-content"></div>
+
+            <!-- Actions -->
+            <div class="surprise-modal-actions">
+                <button class="surprise-another-btn" onclick="openSurpriseModal()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        aria-hidden="true">
+                        <polyline points="1 4 1 10 7 10" />
+                        <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
+                    </svg>
+                    Encore une
+                </button>
+                <button class="surprise-close-btn" onclick="closeSurpriseModal()">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Panneau auteur ── -->
+    <div id="author-overlay" class="panel-overlay" onclick="closeAuthorPanel()" hidden></div>
+    <aside id="author-panel" class="author-panel" hidden aria-label="Fiche auteur">
+        <div class="ap-close-row">
+            <button class="ap-close-btn" onclick="closeAuthorPanel()" aria-label="Fermer">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+        </div>
+        <div id="author-panel-content"></div>
+    </aside>
+
+    <!-- ── Modale "Copier en image" ── -->
+    <div id="image-overlay" class="panel-overlay" onclick="closeImageModal()" hidden></div>
+    <div id="image-modal" class="image-modal" hidden role="dialog" aria-modal="true" aria-label="Générer une image">
+        <div class="image-modal-inner">
+            <div class="image-modal-header">
+                <span class="surprise-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        aria-hidden="true">
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <polyline points="21 15 16 10 5 21" />
+                    </svg>
+                    Créer une image
+                </span>
+                <button class="ap-close-btn" onclick="closeImageModal()" aria-label="Fermer">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+            <div id="image-preview" class="image-preview"></div>
+            <div class="image-theme-row">
+                <p class="image-theme-label">Thème</p>
+                <div class="image-theme-chips">
+                    <button class="theme-chip active" data-theme="cream" onclick="selectTheme('cream')">Crème</button>
+                    <button class="theme-chip" data-theme="dark" onclick="selectTheme('dark')">Nuit</button>
+                    <button class="theme-chip" data-theme="violet" onclick="selectTheme('violet')">Violet</button>
+                    <button class="theme-chip" data-theme="stone" onclick="selectTheme('stone')">Pierre</button>
+                </div>
+            </div>
+            <div class="image-modal-actions">
+                <button class="surprise-another-btn" onclick="shareQuoteImage()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        aria-hidden="true">
+                        <circle cx="18" cy="5" r="3" />
+                        <circle cx="6" cy="12" r="3" />
+                        <circle cx="18" cy="19" r="3" />
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                    </svg>
+                    Partager
+                </button>
+                <button class="image-download-btn" onclick="downloadQuoteImage()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        aria-hidden="true">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    Télécharger
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Modale de confirmation ── -->
+    <div id="confirm-overlay" class="panel-overlay" onclick="closeConfirmModal()" hidden></div>
+    <div id="confirm-modal" class="confirm-modal" hidden role="dialog" aria-modal="true">
+        <h3 class="confirm-title" id="confirm-title">Confirmer</h3>
+        <p class="confirm-message" id="confirm-message"></p>
+        <div class="confirm-actions">
+            <button class="confirm-cancel" onclick="closeConfirmModal()">Annuler</button>
+            <button class="confirm-ok" onclick="confirmAction()">Supprimer</button>
+        </div>
+    </div>
+
+
+    <!-- ── Sidebar navigation ── -->
+    <button class="hamburger-btn" id="hamburger-btn" aria-label="Ouvrir le menu" aria-expanded="false">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+    </button>
+
+    <nav class="sidebar-nav" id="sidebar-nav" role="navigation" aria-label="Navigation principale">
+        <div class="sidebar-header">
+            <span class="sidebar-title">Navigation</span>
+        </div>
+        <ul class="sidebar-links" role="list">
+            <li>
+                <button class="sidebar-link active" role="tab" aria-selected="true" id="btn-today"
+                    onclick="showTab('today')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        aria-hidden="true">
+                        <circle cx="12" cy="12" r="5" />
+                        <line x1="12" y1="1" x2="12" y2="3" />
+                        <line x1="12" y1="21" x2="12" y2="23" />
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                        <line x1="1" y1="12" x2="3" y2="12" />
+                        <line x1="21" y1="12" x2="23" y2="12" />
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                    </svg>
+                    <span>Aujourd'hui</span>
+                </button>
+            </li>
+            <li>
+                <button class="sidebar-link" role="tab" aria-selected="false" id="btn-top" onclick="showTab('top')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        aria-hidden="true">
+                        <path d="M6 9H4.5a2.5 2.5 0 010-5H6" />
+                        <path d="M18 9h1.5a2.5 2.5 0 000-5H18" />
+                        <path d="M4 22h16" />
+                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+                        <path d="M18 2H6v7a6 6 0 0012 0V2z" />
+                    </svg>
+                    <span>Top classement</span>
+                </button>
+            </li>
+            <li>
+                <button class="sidebar-link" role="tab" aria-selected="false" id="btn-stats" onclick="showTab('stats')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        aria-hidden="true">
+                        <line x1="18" y1="20" x2="18" y2="10" />
+                        <line x1="12" y1="20" x2="12" y2="4" />
+                        <line x1="6" y1="20" x2="6" y2="14" />
+                    </svg>
+                    <span>Statistiques</span>
+                </button>
+            </li>
+            <li>
+                <button class="sidebar-link" role="tab" aria-selected="false" id="btn-explorer"
+                    onclick="showTab('explorer')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        aria-hidden="true">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <span>Explorer</span>
+                </button>
+            </li>
+            <li>
+                <button class="sidebar-link" role="tab" aria-selected="false" id="btn-about" onclick="showTab('about')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        aria-hidden="true">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M6 20v-2a6 6 0 0112 0v2" />
+                    </svg>
+                    <span>À propos</span>
+                </button>
+            </li>
+            <li>
+                <button class="sidebar-link" role="tab" aria-selected="false" id="btn-submit"
+                    onclick="showTab('submit')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        aria-hidden="true">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    <span>Soumettre</span>
+                </button>
+            </li>
+            <li class="sidebar-divider"></li>
+            <li>
+                <button class="sidebar-link sidebar-link--muted" role="tab" aria-selected="false" id="btn-admin"
+                    onclick="showTab('admin')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        aria-hidden="true">
+                        <rect x="3" y="11" width="18" height="11" rx="2" />
+                        <path d="M7 11V7a5 5 0 0110 0v4" />
+                    </svg>
+                    <span>Admin</span>
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <script>
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const sidebarNav = document.getElementById('sidebar-nav');
+        const sidebarOvl = document.getElementById('sidebar-overlay');
+        let _sidebarOpen = false;
+
+        function openSidebar() {
+            _sidebarOpen = true;
+            hamburgerBtn.classList.add('sidebar--open');
+            sidebarNav.classList.add('sidebar--open');
+            sidebarOvl.classList.add('visible');
+            hamburgerBtn.setAttribute('aria-expanded', 'true');
+        }
+
+        function closeSidebar() {
+            _sidebarOpen = false;
+            hamburgerBtn.classList.remove('sidebar--open');
+            sidebarNav.classList.remove('sidebar--open');
+            sidebarOvl.classList.remove('visible');
+            hamburgerBtn.setAttribute('aria-expanded', 'false');
+        }
+
+        // Desktop : hover sur le bouton ou la nav
+        hamburgerBtn.addEventListener('mouseenter', () => { if (window.innerWidth >= 768) openSidebar(); });
+        sidebarNav.addEventListener('mouseleave', () => { if (window.innerWidth >= 768) closeSidebar(); });
+
+        // Mobile : clic sur le hamburger
+        hamburgerBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            _sidebarOpen ? closeSidebar() : openSidebar();
+        });
+
+        // Fermer au clic sur l'overlay
+        sidebarOvl.addEventListener('click', closeSidebar);
+
+        // Fermer après navigation sur mobile
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 768) closeSidebar();
+            });
+        });
+
+        // Fermer avec Échap
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && _sidebarOpen) closeSidebar();
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,410 @@
+/* ── css/layout.css ── */
+
+/* ── Header ── */
+.site-header {
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-light);
+    padding: 2.5rem 1.25rem 2rem;
+    text-align: center;
+}
+
+.header-inner {
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    border: 1px solid var(--accent-mid);
+    border-radius: var(--radius-full);
+    padding: 4px 13px;
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fade-up .5s .1s forwards;
+}
+
+.site-title {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 6vw, 48px);
+    font-weight: 700;
+    font-style: italic;
+    color: var(--text-primary);
+    line-height: 1.1;
+    margin-bottom: .6rem;
+    opacity: 0;
+    animation: fade-up .5s .2s forwards;
+}
+
+.site-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    max-width: 380px;
+    margin: 0 auto .8rem;
+    opacity: 0;
+    animation: fade-up .5s .3s forwards;
+}
+
+.date-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    opacity: 0;
+    animation: fade-up .5s .4s forwards;
+}
+
+/* ── Sidebar navigation ── */
+
+/* Bouton hamburger : fixed indépendant, aucun parent */
+.hamburger-btn {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    cursor: pointer;
+    transition: background var(--transition), box-shadow var(--transition);
+}
+
+.hamburger-btn:hover {
+    background: var(--bg-subtle);
+    box-shadow: var(--shadow-hover);
+}
+
+.hamburger-bar {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: var(--text-secondary);
+    border-radius: 2px;
+    transition: transform var(--transition), opacity var(--transition);
+}
+
+/* Animation barres → croix quand ouvert */
+.hamburger-btn.sidebar--open .hamburger-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger-btn.sidebar--open .hamburger-bar:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.hamburger-btn.sidebar--open .hamburger-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Nav sidebar : fixed indépendant, aucun parent */
+.sidebar-nav {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 199;
+    width: 220px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-hover);
+    padding: 52px 0 10px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px) scale(0.97);
+    transform-origin: top left;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.sidebar-nav.sidebar--open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+.sidebar-header {
+    padding: 4px 16px 10px;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 6px;
+}
+
+.sidebar-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+}
+
+.sidebar-links {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 8px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: var(--radius-md);
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: background var(--transition), color var(--transition);
+}
+
+.sidebar-link svg {
+    flex-shrink: 0;
+    opacity: 0.7;
+    transition: opacity var(--transition);
+}
+
+.sidebar-link:hover {
+    background: var(--bg-subtle);
+    color: var(--text-primary);
+}
+
+.sidebar-link:hover svg {
+    opacity: 1;
+}
+
+.sidebar-link.active {
+    background: var(--accent-light);
+    color: var(--accent);
+}
+
+.sidebar-link.active svg {
+    opacity: 1;
+}
+
+.sidebar-link--muted {
+    color: var(--text-tertiary);
+    font-size: 13px;
+}
+
+.sidebar-divider {
+    height: 1px;
+    background: var(--border-light);
+    margin: 6px 8px;
+}
+
+/* Overlay mobile : fixed indépendant */
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .25);
+    z-index: 198;
+    opacity: 0;
+    transition: opacity var(--transition);
+    pointer-events: none;
+}
+
+.sidebar-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ── Main content ── */
+.content {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 5rem;
+}
+
+/* ── Section label ── */
+.section-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 1rem;
+}
+
+/* ── Cards list ── */
+.cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: .85rem;
+}
+
+/* ── Stats grid ── */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin-bottom: .5rem;
+}
+
+.stat-card {
+    background: var(--bg-subtle);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: var(--text-tertiary);
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+/* ── Empty state ── */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-tertiary);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.empty-state svg {
+    margin: 0 auto 12px;
+    opacity: .4;
+}
+
+/* ════════════════════════════════════════════════════════
+   RESPONSIVE
+   Breakpoints : 1024px · 768px · 480px · 360px
+   Philosophie : on touche uniquement l'espacement,
+   la taille de texte et la mise en page des grilles.
+   L'aspect visuel (couleurs, ombres, rayons) ne change pas.
+════════════════════════════════════════════════════════ */
+
+/* ── Grands écrans (> 1024px) : centrer avec plus d'air ── */
+@media (min-width: 1024px) {
+    .content {
+        max-width: 720px;
+        padding: 2.5rem 2rem 6rem;
+    }
+
+    .site-header {
+        padding: 3rem 2rem 2.5rem;
+    }
+}
+
+/* ── Tablettes (≤ 768px) ── */
+@media (max-width: 768px) {
+
+    /* Header plus compact */
+    .site-header {
+        padding: 2rem 1rem 1.5rem;
+    }
+
+    .site-title {
+        font-size: clamp(24px, 7vw, 36px);
+    }
+
+    .site-subtitle {
+        font-size: 13px;
+    }
+
+    /* Décaler le contenu pour ne pas couvrir le hamburger */
+    .content {
+        padding: 1.5rem 1rem 4rem;
+    }
+
+    /* Stats sur 2 colonnes fixes */
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ── Mobiles (≤ 480px) ── */
+@media (max-width: 480px) {
+
+    /* Header très compact */
+    .site-header {
+        padding: 1.5rem .875rem 1.25rem;
+    }
+
+    .header-badge {
+        font-size: 10px;
+        padding: 3px 11px;
+    }
+
+    .site-subtitle {
+        display: none;
+        /* libère de la place, le badge suffit */
+    }
+
+    .date-pill {
+        font-size: 11px;
+    }
+
+    /* Contenu plein-écran avec marges réduites */
+    .content {
+        padding: 1.25rem .875rem 4rem;
+    }
+
+    .cards-list {
+        gap: .7rem;
+    }
+
+    /* Stats en 2 colonnes serrées */
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .stat-value {
+        font-size: 20px;
+    }
+
+    /* Hamburger légèrement remonté sur très petit écran */
+    .hamburger-btn {
+        top: 12px;
+        left: 12px;
+    }
+}
+
+/* ── Très petits écrans (≤ 360px) ── */
+@media (max-width: 360px) {
+    .site-header {
+        padding: 1.25rem .75rem 1rem;
+    }
+
+    .content {
+        padding: 1rem .75rem 3.5rem;
+    }
+
+    /* Sidebar légèrement plus étroite */
+    .sidebar-nav {
+        width: calc(100vw - 24px);
+    }
+}
