@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Page introuvable — Les mots qui comptent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-page:      #F7F5F0;
+      --bg-surface:   #FFFFFF;
+      --bg-subtle:    #F0EDE6;
+      --text-primary: #1A1916;
+      --text-secondary: #6B6760;
+      --text-tertiary:  #9E9B96;
+      --border-light:   rgba(26,25,22,.08);
+      --border-medium:  rgba(26,25,22,.14);
+      --accent:       #4A3F8F;
+      --accent-light: #EAE8F7;
+      --accent-mid:   #9490C4;
+      --radius-md:    10px;
+      --radius-lg:    16px;
+      --radius-full:  999px;
+      --shadow-card:  0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+      --shadow-hover: 0 2px 8px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06);
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body:    'DM Sans', system-ui, sans-serif;
+      --transition:   0.18s ease;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-page:      #161512;
+        --bg-surface:   #1F1E1A;
+        --bg-subtle:    #272520;
+        --text-primary: #F0EDE6;
+        --text-secondary:#9E9B96;
+        --text-tertiary: #6B6760;
+        --border-light:  rgba(240,237,230,.07);
+        --border-medium: rgba(240,237,230,.12);
+        --accent:       #9490C4;
+        --accent-light: #2A2740;
+        --accent-mid:   #6B67A8;
+      }
+    }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-page);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.25rem;
+      text-align: center;
+    }
+
+    /* ── Guillemet géant décoratif ── */
+    .deco-quote {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(120px, 25vw, 220px);
+      line-height: 1;
+      color: var(--accent);
+      opacity: .07;
+      position: fixed;
+      top: -20px;
+      left: -10px;
+      pointer-events: none;
+      user-select: none;
+      animation: fade-in .6s ease both;
+    }
+
+    /* ── Card centrale ── */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      padding: 2.5rem 2rem;
+      max-width: 480px;
+      width: 100%;
+      animation: fade-up .5s .1s both;
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-light);
+      border: 1px solid var(--accent-mid);
+      border-radius: var(--radius-full);
+      padding: 4px 13px;
+      margin-bottom: 1.25rem;
+    }
+
+    /* 404 */
+    .error-number {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(64px, 14vw, 96px);
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1;
+      margin-bottom: .5rem;
+    }
+
+    .error-title {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(18px, 4vw, 24px);
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: .75rem;
+    }
+
+    /* Citation du jour affichée comme excuse poétique */
+    .quote-block {
+      background: var(--bg-subtle);
+      border-left: 3px solid var(--accent-mid);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      padding: .9rem 1.1rem;
+      margin: 1.25rem 0;
+      text-align: left;
+    }
+
+    .quote-block p {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 15px;
+      color: var(--text-primary);
+      line-height: 1.6;
+      margin-bottom: .4rem;
+    }
+
+    .quote-block span {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .error-sub {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 1.75rem;
+    }
+
+    /* Bouton retour */
+    .btn-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-full);
+      padding: 11px 22px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity var(--transition), transform var(--transition);
+    }
+    .btn-home:hover { opacity: .88; transform: translateY(-1px); }
+    .btn-home:active { transform: translateY(0); }
+
+    /* Compteur */
+    .countdown {
+      margin-top: 1rem;
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    /* ── Animations ── */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Décoration guillemet -->
+  <div class="deco-quote" aria-hidden="true">&ldquo;</div>
+
+  <div class="card">
+
+    <!-- Badge -->
+    <div class="badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      Page introuvable
+    </div>
+
+    <!-- Numéro d'erreur -->
+    <p class="error-number">404</p>
+    <h1 class="error-title">Cette page s'est perdue en chemin…</h1>
+
+    <!-- Petite citation poétique -->
+    <blockquote class="quote-block">
+      <p>« Il n'est pas de vent favorable pour celui qui ne sait où il va. »</p>
+      <span>— Sénèque</span>
+    </blockquote>
+
+    <p class="error-sub">
+      La page que vous cherchez n'existe pas ou a été déplacée.<br>
+      Retournez à l'accueil pour découvrir les citations du jour.
+    </p>
+
+    <!-- Bouton retour -->
+    <a href="/" class="btn-home">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      Retour à l'accueil
+    </a>
+
+    <!-- Compteur de redirection automatique -->
+    <p class="countdown" id="countdown">Redirection automatique dans <strong id="secs">10</strong> secondes…</p>
+
+  </div>
+
+  <script>
+    // Compte à rebours et redirection automatique
+    let s = 10;
+    const el = document.getElementById('secs');
+    const timer = setInterval(() => {
+      s--;
+      el.textContent = s;
+      if (s <= 0) {
+        clearInterval(timer);
+        window.location.href = '/';
+      }
+    }, 1000);
+  </script>
+
+</body>
+</html>
