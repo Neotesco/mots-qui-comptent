@@ -81,6 +81,17 @@ function renderAll() {
   renderStats();
 }
 
+// ── Titres des onglets ────────────────────────────────────────────────────────
+const TAB_TITLES = {
+  today:    'Aujourd\'hui',
+  top:      'Top classement',
+  stats:    'Statistiques',
+  explorer: 'Explorer',
+  about:    'À propos',
+  submit:   'Soumettre une citation',
+  admin:    'Administration',
+};
+
 // ── Navigation par onglets ────────────────────────────────────────────────────
 const TABS = ['today', 'top', 'stats', 'explorer', 'about', 'submit', 'admin'];
 
@@ -98,6 +109,12 @@ function showTab(name) {
       if (btn) { btn.classList.remove('active'); btn.setAttribute('aria-selected', 'false'); }
     }
   });
+
+  // ── Titre de l'onglet navigateur ──────────────────────────────────────────
+  const label = TAB_TITLES[name] || '';
+  document.title = label
+    ? `${label} — Les mots qui comptent`
+    : 'Les mots qui comptent';
 
   // Fermer la sidebar sur mobile après navigation
   if (typeof closeSidebar === 'function') closeSidebar();
