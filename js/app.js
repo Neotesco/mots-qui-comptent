@@ -154,3 +154,9 @@ async function init() {
 }
 
 init();
+
+// ── Bouton remonter en haut ───────────────────────────────────────────────────
+const _scrollBtn = document.getElementById('scroll-top-btn');
+window.addEventListener('scroll', () => {
+  _scrollBtn.classList.toggle('visible', window.scrollY > 300);
+}, { passive: true });
