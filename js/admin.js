@@ -1,17 +1,27 @@
 // ── js/admin.js ──
 // Panneau d'administration : publication de nouvelles citations.
-// Protégé par mot de passe côté client.
+// Protégé par mot de passe côté client (hash SHA-256).
 
-const ADMIN_PASSWORD_HASH = 'Dylann2008@@';
+// ⚠️ Ce hash correspond à ton mot de passe — ne partage jamais le mot de passe lui-même.
+// Pour générer un nouveau hash : https://emn178.github.io/online-tools/sha256.html
+const ADMIN_PASSWORD_HASH = '5ddac91c34cefae85d4734ebefd4412950bab0533f7ddcf21fb0fb0fb33b019e';
 
 let _adminUnlocked = false;
 
-// ── Vérification du mot de passe ─────────────────────────────────────────────
-function checkAdminPassword() {
+// ── Vérification du mot de passe (async car SHA-256 est asynchrone) ───────────
+async function checkAdminPassword() {
   const input   = document.getElementById('admin-password-input').value;
   const errorEl = document.getElementById('admin-password-error');
 
-  if (input === ADMIN_PASSWORD_HASH) {
+  // Hasher la saisie avec SHA-256 (API Web Crypto, native dans tous les navigateurs)
+  const hashBuffer = await crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(input)
+  );
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex   = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+  if (hashHex === ADMIN_PASSWORD_HASH) {
     _adminUnlocked = true;
     document.getElementById('admin-login-screen').setAttribute('hidden', '');
     document.getElementById('admin-dashboard').removeAttribute('hidden');
