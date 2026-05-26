@@ -129,11 +129,13 @@ function showTab(name) {
 
 // ── Gestion du vote ───────────────────────────────────────────────────────────
 function handleVote(quoteId, dir) {
+  // castVote met à jour state.votes de façon synchrone avant l'envoi Supabase
   castVote(state, quoteId, dir).then(() => {
+    // Une fois la réponse Supabase reçue, on recharge les scores globaux et on re-rend
     loadGlobalScores().then(() => renderAll());
   });
 
-  // Animation immédiate
+  // Animation immédiate sur les boutons
   document.querySelectorAll(`[data-id="${quoteId}"] .vote-btn`).forEach(btn => {
     btn.classList.remove('pop');
     void btn.offsetWidth;
@@ -141,8 +143,9 @@ function handleVote(quoteId, dir) {
     btn.addEventListener('animationend', () => btn.classList.remove('pop'), { once: true });
   });
 
-  // Mise à jour locale immédiate pour la réactivité
-  renderAll();
+  // Rendu optimiste : state.votes est déjà mis à jour de façon synchrone dans castVote
+  // On laisse la microtask queue se vider avant de re-rendre pour être sûr
+  Promise.resolve().then(() => renderAll());
 }
 
 // ── Date affichée ─────────────────────────────────────────────────────────────
