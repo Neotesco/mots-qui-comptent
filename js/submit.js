@@ -1,5 +1,6 @@
 // ── js/submit.js ──
-// Gestion de la page "Soumettre une citation" — envoi par email via Formspree.
+// Gestion de la page "Soumettre une citation"
+// → envoie par email via Formspree ET stocke dans Supabase (pending_quotes)
 
 const FORMSPREE_URL = 'https://formspree.io/f/mzdweaon';
 
@@ -37,7 +38,7 @@ async function handleSubmit() {
   document.getElementById('submit-form').setAttribute('hidden', '');
   document.getElementById('submit-success').removeAttribute('hidden');
 
-  // Envoi à Formspree en arrière-plan
+  // ── 1. Envoi à Formspree (email) ──────────────────────────────────────────
   fetch(FORMSPREE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -48,6 +49,20 @@ async function handleSubmit() {
       categorie: cat,
     }),
   }).catch(err => console.warn('Erreur Formspree :', err));
+
+  // ── 2. Stockage dans Supabase (pending_quotes) ────────────────────────────
+  sbClient
+    .from('pending_quotes')
+    .insert({
+      text:   text.trim(),
+      author: author.trim(),
+      era:    era || null,
+      cat,
+      status: 'en_attente',
+    })
+    .then(({ error: sbError }) => {
+      if (sbError) console.warn('Erreur Supabase pending_quotes :', sbError.message);
+    });
 }
 
 function resetSubmitForm() {
@@ -60,5 +75,3 @@ function resetSubmitForm() {
   document.getElementById('submit-success').setAttribute('hidden', '');
   document.getElementById('submit-form').removeAttribute('hidden');
 }
-
-// renderSubmissions n'est plus utilisé (section supprimée)
