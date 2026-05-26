@@ -146,7 +146,7 @@ function showTab(name) {
   if (name === 'top')      renderTop();
   if (name === 'stats')    renderStats();
   if (name === 'explorer') renderExplorer();
-  if (name === 'submit')   renderSubmissions();
+  if (name === 'submit') {}
   if (name === 'admin')    renderAdminPanel();
 }
 
