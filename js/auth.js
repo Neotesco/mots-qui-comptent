@@ -24,28 +24,50 @@ function getCurrentUser() {
 // ── Mise à jour de l'UI selon l'état de connexion ────────────────────────────
 function _updateAuthUI() {
   const btnAuth = document.getElementById('btn-auth');
-  if (!btnAuth) return;
+  const label = document.getElementById('btn-auth-label');
+
+  if (!btnAuth || !label) return;
+
+  // Cherche ou crée l'avatar
+  let avatar = document.getElementById('btn-auth-avatar');
+
+  if (!avatar) {
+    avatar = document.createElement('span');
+    avatar.id = 'btn-auth-avatar';
+
+    avatar.style.display = 'inline-flex';
+    avatar.style.alignItems = 'center';
+    avatar.style.justifyContent = 'center';
+    avatar.style.width = '24px';
+    avatar.style.height = '24px';
+    avatar.style.borderRadius = '50%';
+    avatar.style.fontSize = '12px';
+    avatar.style.fontWeight = '700';
+    avatar.style.marginRight = '10px';
+
+    btnAuth.insertBefore(avatar, label);
+  }
 
   if (_currentUser) {
     const email = _currentUser.email || '';
     const initial = email.charAt(0).toUpperCase();
-    btnAuth.textContent = initial;
+
+    avatar.textContent = initial;
+    avatar.style.background = 'var(--accent)';
+    avatar.style.color = '#fff';
+
+    label.textContent = 'Mon compte';
+
     btnAuth.title = email;
-    btnAuth.style.background = 'var(--accent)';
-    btnAuth.style.color = '#fff';
-    btnAuth.style.borderRadius = '50%';
-    btnAuth.style.width = '32px';
-    btnAuth.style.height = '32px';
-    btnAuth.style.fontSize = '14px';
-    btnAuth.style.fontWeight = '700';
+
   } else {
-    btnAuth.textContent = '👤';
+    avatar.textContent = '👤';
+    avatar.style.background = 'transparent';
+    avatar.style.color = 'currentColor';
+
+    label.textContent = 'Mon compte';
+
     btnAuth.title = 'Se connecter';
-    btnAuth.style.background = '';
-    btnAuth.style.color = '';
-    btnAuth.style.borderRadius = '';
-    btnAuth.style.width = '';
-    btnAuth.style.height = '';
   }
 }
 
