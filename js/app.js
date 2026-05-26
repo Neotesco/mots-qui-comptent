@@ -1,17 +1,44 @@
 // ── js/app.js ──
 // Point d'entrée de l'application.
+// Les citations sont chargées depuis Supabase (table published_quotes)
+// au lieu d'être embarquées dans data.js.
 
 // ── État global ───────────────────────────────────────────────────────────────
 let state = loadState();
 updateStreak(state);
 saveState(state);
 
+// Remplace l'ancien tableau statique — sera peuplé depuis Supabase
+let ALL_QUOTES   = [];
+let TOTAL_DAYS   = 0;
+let AUTHOR_BIOS  = {}; // reste vide ; on n'affiche plus les bios depuis data.js
+                       // (si tu veux les conserver, garde data.js chargé en parallèle)
+
+// ── Chargement des citations depuis Supabase ──────────────────────────────────
+async function loadQuotes() {
+  const { data, error } = await sbClient
+    .from('published_quotes')
+    .select('id, text, text_en, author, era, cat, day')
+    .order('id', { ascending: true });
+
+  if (error) {
+    console.error('Erreur chargement citations :', error.message);
+    return;
+  }
+
+  // Normalise text_en → textEn pour rester compatible avec le reste du code
+  ALL_QUOTES  = (data || []).map(q => ({ ...q, textEn: q.text_en }));
+  TOTAL_DAYS  = ALL_QUOTES.length
+    ? Math.max(...ALL_QUOTES.map(q => q.day)) + 1
+    : 1;
+}
+
 // ── Calcul du jour courant ────────────────────────────────────────────────────
 function getTodayDayIndex() {
   const EPOCH    = new Date('2025-01-01T00:00:00');
   const now      = new Date();
   const diffDays = Math.floor((now - EPOCH) / (1000 * 60 * 60 * 24));
-  return diffDays % TOTAL_DAYS;
+  return diffDays % (TOTAL_DAYS || 1);
 }
 
 function getTodayQuotes() {
@@ -110,13 +137,11 @@ function showTab(name) {
     }
   });
 
-  // ── Titre de l'onglet navigateur ──────────────────────────────────────────
   const label = TAB_TITLES[name] || '';
   document.title = label
     ? `${label} — Les mots qui comptent`
     : 'Les mots qui comptent';
 
-  // Fermer la sidebar sur mobile après navigation
   if (typeof closeSidebar === 'function') closeSidebar();
 
   if (name === 'today')    renderToday();
@@ -129,13 +154,10 @@ function showTab(name) {
 
 // ── Gestion du vote ───────────────────────────────────────────────────────────
 function handleVote(quoteId, dir) {
-  // castVote met à jour state.votes de façon synchrone avant l'envoi Supabase
   castVote(state, quoteId, dir).then(() => {
-    // Une fois la réponse Supabase reçue, on recharge les scores globaux et on re-rend
     loadGlobalScores().then(() => renderAll());
   });
 
-  // Animation immédiate sur les boutons
   document.querySelectorAll(`[data-id="${quoteId}"] .vote-btn`).forEach(btn => {
     btn.classList.remove('pop');
     void btn.offsetWidth;
@@ -143,8 +165,6 @@ function handleVote(quoteId, dir) {
     btn.addEventListener('animationend', () => btn.classList.remove('pop'), { once: true });
   });
 
-  // Rendu optimiste : state.votes est déjà mis à jour de façon synchrone dans castVote
-  // On laisse la microtask queue se vider avant de re-rendre pour être sûr
   Promise.resolve().then(() => renderAll());
 }
 
@@ -162,23 +182,28 @@ function setDisplayDates() {
 // ── Init async ────────────────────────────────────────────────────────────────
 async function init() {
   setDisplayDates();
-  renderAll(); // rendu immédiat avec cache local
 
-  // Chargement async depuis Supabase
+  // Skeleton / état vide pendant le chargement
+  const skeleton = '<div class="empty-state" style="padding:2rem">Chargement…</div>';
+  ['today-cards', 'top-cards'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = skeleton;
+  });
+
+  // Chargement parallèle : citations + votes + scores
   await Promise.all([
+    loadQuotes(),
     loadVotesFromSupabase(state),
     loadGlobalScores(),
   ]);
 
-  renderAll(); // re-rendu avec données à jour
+  renderAll();
 }
 
 init();
 
-// ── Mise à jour silencieuse des scores (sans reconstruire le DOM) ────────────
+// ── Mise à jour silencieuse des scores ────────────────────────────────────────
 function updateScoresSilently() {
-  // Met à jour uniquement les chiffres visibles dans les boutons de vote
-  // sans reconstruire les cartes — pas de flash, pas de perte de focus
   document.querySelectorAll('[data-id]').forEach(card => {
     const id    = parseInt(card.dataset.id);
     const quote = ALL_QUOTES.find(q => q.id === id);
@@ -189,7 +214,6 @@ function updateScoresSilently() {
     const topScore = card.querySelector('.top-score');
 
     if (upBtn && upBtn.childNodes.length) {
-      // Remplace le noeud texte du score (dernier enfant du bouton)
       const textNode = [...upBtn.childNodes].find(n => n.nodeType === 3);
       if (textNode) textNode.textContent = ' ' + score;
     }
@@ -200,9 +224,7 @@ function updateScoresSilently() {
   });
 }
 
-// ── Polling Supabase — rafraîchissement automatique des scores ────────────────
-// Toutes les 30 secondes, on recharge les scores depuis Supabase
-// et on met à jour uniquement les chiffres, sans reconstruire les cartes.
+// ── Polling Supabase (30 s) ───────────────────────────────────────────────────
 setInterval(() => {
   loadGlobalScores().then(() => updateScoresSilently());
 }, 30000);
