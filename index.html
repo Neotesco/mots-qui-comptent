@@ -13,7 +13,7 @@
     <!-- Aperçu WhatsApp / iMessage / Discord (Open Graph) -->
     <meta property="og:title" content="Les mots qui comptent" />
     <meta property="og:description" content="Des citations inspirantes chaque jour — votez pour vos préférées." />
-    <meta property="og:url" content="https://mots-qui-comptent.netlify.app/" />
+    <meta property="og:url" content="https://mots-qui-comptent.pages.dev/" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fr_FR" />
 
@@ -76,7 +76,6 @@
         </div>
     </header>
 
-
     <!-- ── Main content ── -->
     <main class="content">
 
@@ -110,25 +109,18 @@
 
             <!-- Filtres -->
             <div class="explorer-filters" id="explorer-filters">
-
-                <!-- Filtre Catégorie -->
                 <div class="filter-group">
                     <p class="filter-group-label">Catégorie</p>
                     <div class="filter-chips" id="filter-cats"></div>
                 </div>
-
-                <!-- Filtre Auteur -->
                 <div class="filter-group">
                     <p class="filter-group-label">Auteur</p>
                     <div class="filter-chips" id="filter-authors"></div>
                 </div>
-
-                <!-- Filtre Époque -->
                 <div class="filter-group">
                     <p class="filter-group-label">Époque</p>
                     <div class="filter-chips" id="filter-eras"></div>
                 </div>
-
             </div>
 
             <!-- Compteur de résultats + tri -->
@@ -144,7 +136,6 @@
                 </div>
             </div>
 
-            <!-- Résultats -->
             <div id="explorer-cards" class="cards-list"></div>
         </section>
 
@@ -189,7 +180,6 @@
         <section id="tab-submit" role="tabpanel" aria-labelledby="btn-submit" hidden>
             <p class="section-label">Proposer une citation</p>
 
-            <!-- Formulaire -->
             <div class="submit-form" id="submit-form">
                 <div class="field-group">
                     <label class="field-label" for="input-text">Citation <span class="required">*</span></label>
@@ -201,13 +191,13 @@
                 <div class="field-row">
                     <div class="field-group">
                         <label class="field-label" for="input-author">Auteur <span class="required">*</span></label>
-                        <input id="input-author" class="field-input" type="text" placeholder="Ex : Albert Camus"
+                        <input id="input-author" class="field-input" type="text" placeholder="Ex : Albert Camus"
                             maxlength="80" />
                     </div>
                     <div class="field-group">
                         <label class="field-label" for="input-era">Époque / titre <span
                                 class="optional">(facultatif)</span></label>
-                        <input id="input-era" class="field-input" type="text" placeholder="Ex : Écrivain, 1913–1960"
+                        <input id="input-era" class="field-input" type="text" placeholder="Ex : Écrivain, 1913–1960"
                             maxlength="80" />
                     </div>
                 </div>
@@ -243,7 +233,6 @@
                 </button>
             </div>
 
-            <!-- Confirmation -->
             <div class="submit-success" id="submit-success" hidden>
                 <div class="success-icon">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -252,12 +241,105 @@
                         <polyline points="22 4 12 14.01 9 11.01" />
                     </svg>
                 </div>
-                <h2 class="success-title">Citation envoyée !</h2>
-                <p class="success-msg">Merci pour votre contribution. Elle sera examinée avant publication.
-                </p>
+                <h2 class="success-title">Citation envoyée !</h2>
+                <p class="success-msg">Merci pour votre contribution. Elle sera examinée avant publication.</p>
                 <button class="submit-btn" style="margin-top:1.5rem" onclick="resetSubmitForm()">
                     Soumettre une autre citation
                 </button>
+            </div>
+        </section>
+
+        <!-- Tab : Connexion / Mon compte ──────────────────────────────────── -->
+        <section id="tab-auth" role="tabpanel" aria-labelledby="btn-auth" hidden>
+
+            <!-- Formulaire connexion / inscription -->
+            <div id="auth-form-panel">
+                <div style="max-width:380px;margin:2rem auto">
+
+                    <div style="text-align:center;margin-bottom:2rem">
+                        <div style="font-size:40px;margin-bottom:.5rem">👤</div>
+                        <h2 style="font-family:var(--font-display);font-size:22px;margin-bottom:.25rem">Mon compte</h2>
+                        <p style="font-size:14px;color:var(--text-secondary)">Retrouvez vos likes sur tous vos appareils</p>
+                    </div>
+
+                    <div class="field-group" style="margin-bottom:.75rem">
+                        <label class="field-label" for="auth-email">Email</label>
+                        <input id="auth-email" class="field-input" type="email" placeholder="votre@email.com" />
+                    </div>
+
+                    <div class="field-group" style="margin-bottom:1.25rem">
+                        <label class="field-label" for="auth-password">Mot de passe</label>
+                        <input id="auth-password" class="field-input" type="password" placeholder="6 caractères minimum" />
+                    </div>
+
+                    <div id="auth-error" class="submit-error" hidden></div>
+                    <div id="auth-success" style="color:#16a34a;font-size:14px;margin-bottom:.75rem" hidden></div>
+
+                    <!-- Section connexion -->
+                    <div id="auth-signin-section">
+                        <button id="auth-btn-signin" class="submit-btn" style="width:100%;margin-bottom:.75rem"
+                            onclick="handleSignIn()">
+                            Se connecter
+                        </button>
+                        <button onclick="handleForgotPassword()" style="
+                            width:100%;font-size:13px;color:var(--text-secondary);
+                            background:none;border:none;cursor:pointer;margin-bottom:1rem;
+                        ">Mot de passe oublié ?</button>
+                        <p style="text-align:center;font-size:14px;color:var(--text-secondary)">
+                            Pas encore de compte ?
+                            <button onclick="toggleAuthMode()" style="
+                                background:none;border:none;color:var(--accent);
+                                font-weight:600;cursor:pointer;font-size:14px;
+                            ">Créer un compte</button>
+                        </p>
+                    </div>
+
+                    <!-- Section inscription (cachée par défaut) -->
+                    <div id="auth-signup-section" hidden>
+                        <button id="auth-btn-signup" class="submit-btn" style="width:100%;margin-bottom:.75rem"
+                            onclick="handleSignUp()">
+                            Créer mon compte
+                        </button>
+                        <p style="text-align:center;font-size:14px;color:var(--text-secondary)">
+                            Déjà un compte ?
+                            <button onclick="toggleAuthMode()" style="
+                                background:none;border:none;color:var(--accent);
+                                font-weight:600;cursor:pointer;font-size:14px;
+                            ">Se connecter</button>
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Panel utilisateur connecté -->
+            <div id="auth-user-panel" hidden>
+                <div style="max-width:380px;margin:2rem auto;text-align:center">
+                    <div style="font-size:48px;margin-bottom:1rem">✅</div>
+                    <h2 style="font-family:var(--font-display);font-size:20px;margin-bottom:.5rem">Connecté</h2>
+                    <p id="auth-user-email" style="font-size:14px;color:var(--text-secondary);margin-bottom:2rem"></p>
+
+                    <div style="background:var(--bg-subtle);border-radius:14px;padding:1.25rem;text-align:left;margin-bottom:1.5rem">
+                        <p style="font-size:13px;font-weight:600;margin-bottom:.75rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.05em">Mon activité</p>
+                        <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:.5rem">
+                            <span>Citations likées</span>
+                            <strong id="auth-likes-count">—</strong>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;font-size:14px">
+                            <span>Citations soumises</span>
+                            <strong id="auth-submissions-count">—</strong>
+                        </div>
+                    </div>
+
+                    <button class="submit-btn" onclick="handleSignOut()" style="
+                        width:100%;
+                        background:var(--bg-subtle);
+                        color:var(--text-primary);
+                        border:1px solid var(--border-medium);
+                    ">
+                        Se déconnecter
+                    </button>
+                </div>
             </div>
 
         </section>
@@ -265,54 +347,49 @@
         <!-- Tab : Admin ──────────────────────────────────────────────────── -->
         <section id="tab-admin" role="tabpanel" aria-labelledby="btn-admin" hidden>
 
-            <!-- Écran de connexion -->
             <div id="admin-login-screen">
                 <div style="max-width:360px;margin:3rem auto;text-align:center">
                     <div style="font-size:40px;margin-bottom:1rem">🔒</div>
-                    <h2 style="font-family:var(--font-display);font-size:22px;margin-bottom:.5rem">Espace administration
-                    </h2>
-                    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:1.5rem">Entrez le mot de passe
-                        pour accéder au panneau.</p>
+                    <h2 style="font-family:var(--font-display);font-size:22px;margin-bottom:.5rem">Espace administration</h2>
+                    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:1.5rem">Entrez le mot de passe pour accéder au panneau.</p>
                     <input id="admin-password-input" type="password" class="field-input" placeholder="Mot de passe…"
                         style="margin-bottom:.75rem;text-align:center" />
-                    <div id="admin-password-error" style="color:var(--danger);font-size:13px;margin-bottom:.75rem"
-                        hidden></div>
+                    <div id="admin-password-error" style="color:var(--danger);font-size:13px;margin-bottom:.75rem" hidden></div>
                     <button class="submit-btn" onclick="checkAdminPassword()" style="width:100%">
                         Accéder →
                     </button>
                 </div>
             </div>
 
-            <!-- Dashboard admin : formulaire de publication -->
             <div id="admin-dashboard" hidden>
-                <!-- ── Citations en attente de modération ─────────────────── -->
+                <!-- Citations en attente -->
                 <div style="margin-bottom:2rem">
                     <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:1rem">
-                      <p class="section-label" style="margin-bottom:0">Citations en attente</p>
-                      <span id="pending-badge" style="
-                        display:none;
-                        background:var(--accent);
-                        color:#fff;
-                        font-size:12px;font-weight:700;
-                        min-width:20px;height:20px;
-                        border-radius:99px;
-                        padding:0 6px;
-                        align-items:center;justify-content:center;
-                      "></span>
-                      <button onclick="loadPendingQuotes()" title="Rafraîchir" style="
-                        margin-left:auto;
-                        font-size:12px;color:var(--text-secondary);
-                        background:var(--bg-subtle);border:1px solid var(--border-medium);
-                        border-radius:6px;padding:4px 10px;cursor:pointer;
-                      ">⟳ Rafraîchir</button>
+                        <p class="section-label" style="margin-bottom:0">Citations en attente</p>
+                        <span id="pending-badge" style="
+                            display:none;
+                            background:var(--accent);
+                            color:#fff;
+                            font-size:12px;font-weight:700;
+                            min-width:20px;height:20px;
+                            border-radius:99px;
+                            padding:0 6px;
+                            align-items:center;justify-content:center;
+                        "></span>
+                        <button onclick="loadPendingQuotes()" title="Rafraîchir" style="
+                            margin-left:auto;
+                            font-size:12px;color:var(--text-secondary);
+                            background:var(--bg-subtle);border:1px solid var(--border-medium);
+                            border-radius:6px;padding:4px 10px;cursor:pointer;
+                        ">⟳ Rafraîchir</button>
                     </div>
                     <div id="pending-list">
-                      <p style="color:var(--text-secondary);font-size:14px">Chargement…</p>
+                        <p style="color:var(--text-secondary);font-size:14px">Chargement…</p>
                     </div>
-                  </div>
-                
+                </div>
+
                 <hr style="border:none;border-top:1px solid var(--border-light);margin-bottom:2rem" />
-                
+
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
                     <p class="section-label" style="margin-bottom:0">Publier une nouvelle citation</p>
                     <button onclick="adminLogout()" style="
@@ -338,10 +415,8 @@
                 </div>
 
                 <div class="submit-form" id="admin-publish-form">
-
                     <div class="field-group">
-                        <label class="field-label" for="admin-input-text">Citation <span
-                                class="required">*</span></label>
+                        <label class="field-label" for="admin-input-text">Citation <span class="required">*</span></label>
                         <textarea id="admin-input-text" class="field-input field-textarea"
                             placeholder="Saisissez le texte de la citation…" rows="4" maxlength="400"
                             oninput="document.getElementById('admin-char-count').textContent=this.value.length"></textarea>
@@ -349,22 +424,19 @@
                     </div>
 
                     <div class="field-group">
-                        <label class="field-label" for="admin-input-text-en">Traduction anglaise <span
-                                class="optional">(facultatif)</span></label>
+                        <label class="field-label" for="admin-input-text-en">Traduction anglaise <span class="optional">(facultatif)</span></label>
                         <textarea id="admin-input-text-en" class="field-input field-textarea"
                             placeholder="Version originale en anglais…" rows="3" maxlength="400"></textarea>
                     </div>
 
                     <div class="field-row">
                         <div class="field-group">
-                            <label class="field-label" for="admin-input-author">Auteur <span
-                                    class="required">*</span></label>
+                            <label class="field-label" for="admin-input-author">Auteur <span class="required">*</span></label>
                             <input id="admin-input-author" class="field-input" type="text"
                                 placeholder="Ex : Albert Camus" maxlength="80" />
                         </div>
                         <div class="field-group">
-                            <label class="field-label" for="admin-input-era">Époque / titre <span
-                                    class="optional">(facultatif)</span></label>
+                            <label class="field-label" for="admin-input-era">Époque / titre <span class="optional">(facultatif)</span></label>
                             <input id="admin-input-era" class="field-input" type="text"
                                 placeholder="Ex : Écrivain, 1913–1960" maxlength="80" />
                         </div>
@@ -372,8 +444,7 @@
 
                     <div class="field-row">
                         <div class="field-group">
-                            <label class="field-label" for="admin-input-cat">Catégorie <span
-                                    class="required">*</span></label>
+                            <label class="field-label" for="admin-input-cat">Catégorie <span class="required">*</span></label>
                             <select id="admin-input-cat" class="field-input field-select">
                                 <option value="">— Choisir —</option>
                                 <option>Sagesse</option>
@@ -391,10 +462,8 @@
                             </select>
                         </div>
                         <div class="field-group">
-                            <label class="field-label" for="admin-input-day">Jour d'affichage <span
-                                    class="required">*</span></label>
-                            <input id="admin-input-day" class="field-input" type="number" min="0"
-                                placeholder="Ex : 15" />
+                            <label class="field-label" for="admin-input-day">Jour d'affichage <span class="required">*</span></label>
+                            <input id="admin-input-day" class="field-input" type="number" min="0" placeholder="Ex : 15" />
                             <span style="font-size:11px;color:var(--text-tertiary);margin-top:4px;display:block">Dernier
                                 jour utilisé : <strong id="admin-last-day">—</strong></span>
                         </div>
@@ -408,13 +477,12 @@
                             <line x1="12" y1="5" x2="12" y2="19" />
                             <line x1="5" y1="12" x2="19" y2="12" />
                         </svg>
-                        Générer le bloc data.js
+                        Publier dans Supabase
                     </button>
                 </div>
 
-                <!-- Résultat à copier -->
                 <div id="admin-publish-result" hidden style="margin-top:1.5rem">
-                    <p class="section-label">Bloc à copier dans data.js</p>
+                    <p class="section-label">Résultat</p>
                     <div style="position:relative">
                         <pre id="admin-code-output" style="
                             background:var(--bg-subtle);
@@ -427,23 +495,7 @@
                             white-space:pre;
                             color:var(--text-primary);
                         "></pre>
-                        <button onclick="adminCopyCode()" style="
-                            position:absolute;top:10px;right:10px;
-                            font-size:12px;font-weight:500;
-                            color:var(--accent);
-                            background:var(--bg-surface);
-                            border:1px solid var(--border-medium);
-                            border-radius:var(--radius-sm);
-                            padding:4px 12px;cursor:pointer;
-                        " id="admin-copy-btn">Copier</button>
                     </div>
-                    <p style="font-size:13px;color:var(--text-secondary);margin-top:.75rem;line-height:1.6">
-                        Colle ce bloc dans <code
-                            style="background:var(--bg-subtle);padding:1px 6px;border-radius:4px">js/data.js</code>,
-                        à l'intérieur du tableau <code
-                            style="background:var(--bg-subtle);padding:1px 6px;border-radius:4px">ALL_QUOTES</code>,
-                        après la dernière citation existante.
-                    </p>
                     <button class="submit-btn"
                         style="margin-top:1rem;background:var(--bg-subtle);color:var(--text-primary);border:1px solid var(--border-medium)"
                         onclick="resetAdminPublishForm()">
@@ -455,8 +507,6 @@
 
         <!-- Tab : À propos -->
         <section id="tab-about" role="tabpanel" aria-labelledby="btn-about" hidden>
-
-            <!-- Hero -->
             <div class="about-hero">
                 <div class="about-avatar">DC</div>
                 <div>
@@ -465,13 +515,10 @@
                 </div>
             </div>
 
-            <!-- Pourquoi ce site existe -->
             <div class="about-block">
                 <div class="about-block-icon">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                        aria-hidden="true">
-                        <path
-                            d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                        <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
                     </svg>
                 </div>
                 <div>
@@ -504,17 +551,14 @@
                 </div>
             </div>
 
-            <!-- Citation dédicace -->
             <div class="about-quote-block">
                 <p class="about-quote">« Pour elle, son soleil. »</p>
                 <span class="about-quote-sig">— Dylann Chaffot</span>
             </div>
 
-            <!-- Contact -->
             <div class="about-block about-contact">
                 <div class="about-block-icon">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                        aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                         <polyline points="22,6 12,13 2,6" />
                     </svg>
@@ -528,7 +572,6 @@
                     </p>
                 </div>
             </div>
-
         </section>
 
     </main>
@@ -544,6 +587,7 @@
     <script src="js/imagecard.js"></script>
     <script src="js/surprise.js"></script>
     <script src="js/admin.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
 
     <!-- ── Modale "Surprenez-moi" ── -->
@@ -551,11 +595,9 @@
     <div id="surprise-modal" class="surprise-modal" hidden role="dialog" aria-modal="true"
         aria-labelledby="surprise-modal-title">
         <div class="surprise-modal-inner">
-            <!-- Header -->
             <div class="surprise-modal-header">
                 <span class="surprise-badge">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        aria-hidden="true">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <polyline points="16 3 21 3 21 8" />
                         <line x1="4" y1="20" x2="21" y2="3" />
                         <polyline points="21 16 21 21 16 21" />
@@ -570,15 +612,10 @@
                     </svg>
                 </button>
             </div>
-
-            <!-- Contenu de la citation -->
             <div id="surprise-content"></div>
-
-            <!-- Actions -->
             <div class="surprise-modal-actions">
                 <button class="surprise-another-btn" onclick="openSurpriseModal()">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <polyline points="1 4 1 10 7 10" />
                         <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
                     </svg>
@@ -609,8 +646,7 @@
         <div class="image-modal-inner">
             <div class="image-modal-header">
                 <span class="surprise-badge">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        aria-hidden="true">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <rect x="3" y="3" width="18" height="18" rx="2" />
                         <circle cx="8.5" cy="8.5" r="1.5" />
                         <polyline points="21 15 16 10 5 21" />
@@ -636,8 +672,7 @@
             </div>
             <div class="image-modal-actions">
                 <button class="surprise-another-btn" onclick="shareQuoteImage()">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <circle cx="18" cy="5" r="3" />
                         <circle cx="6" cy="12" r="3" />
                         <circle cx="18" cy="19" r="3" />
@@ -647,8 +682,7 @@
                     Partager
                 </button>
                 <button class="image-download-btn" onclick="downloadQuoteImage()">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
                         <polyline points="7 10 12 15 17 10" />
                         <line x1="12" y1="15" x2="12" y2="3" />
@@ -670,7 +704,6 @@
         </div>
     </div>
 
-
     <!-- ── Sidebar navigation ── -->
     <button class="hamburger-btn" id="hamburger-btn" aria-label="Ouvrir le menu" aria-expanded="false">
         <span class="hamburger-bar"></span>
@@ -686,8 +719,7 @@
             <li>
                 <button class="sidebar-link active" role="tab" aria-selected="true" id="btn-today"
                     onclick="showTab('today')">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <circle cx="12" cy="12" r="5" />
                         <line x1="12" y1="1" x2="12" y2="3" />
                         <line x1="12" y1="21" x2="12" y2="23" />
@@ -703,8 +735,7 @@
             </li>
             <li>
                 <button class="sidebar-link" role="tab" aria-selected="false" id="btn-top" onclick="showTab('top')">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <path d="M6 9H4.5a2.5 2.5 0 010-5H6" />
                         <path d="M18 9h1.5a2.5 2.5 0 000-5H18" />
                         <path d="M4 22h16" />
@@ -717,8 +748,7 @@
             </li>
             <li>
                 <button class="sidebar-link" role="tab" aria-selected="false" id="btn-stats" onclick="showTab('stats')">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <line x1="18" y1="20" x2="18" y2="10" />
                         <line x1="12" y1="20" x2="12" y2="4" />
                         <line x1="6" y1="20" x2="6" y2="14" />
@@ -727,10 +757,8 @@
                 </button>
             </li>
             <li>
-                <button class="sidebar-link" role="tab" aria-selected="false" id="btn-explorer"
-                    onclick="showTab('explorer')">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        aria-hidden="true">
+                <button class="sidebar-link" role="tab" aria-selected="false" id="btn-explorer" onclick="showTab('explorer')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <circle cx="11" cy="11" r="8" />
                         <line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
@@ -739,8 +767,7 @@
             </li>
             <li>
                 <button class="sidebar-link" role="tab" aria-selected="false" id="btn-about" onclick="showTab('about')">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <circle cx="12" cy="8" r="4" />
                         <path d="M6 20v-2a6 6 0 0112 0v2" />
                     </svg>
@@ -748,22 +775,28 @@
                 </button>
             </li>
             <li>
-                <button class="sidebar-link" role="tab" aria-selected="false" id="btn-submit"
-                    onclick="showTab('submit')">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        aria-hidden="true">
+                <button class="sidebar-link" role="tab" aria-selected="false" id="btn-submit" onclick="showTab('submit')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <line x1="12" y1="5" x2="12" y2="19" />
                         <line x1="5" y1="12" x2="19" y2="12" />
                     </svg>
                     <span>Soumettre</span>
                 </button>
             </li>
+            <li>
+                <button class="sidebar-link" role="tab" aria-selected="false" id="btn-auth" onclick="showTab('auth')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M6 20v-2a6 6 0 0112 0v2" />
+                    </svg>
+                    <span id="btn-auth-label">Mon compte</span>
+                </button>
+            </li>
             <li class="sidebar-divider"></li>
             <li>
                 <button class="sidebar-link sidebar-link--muted" role="tab" aria-selected="false" id="btn-admin"
                     onclick="showTab('admin')">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <rect x="3" y="11" width="18" height="11" rx="2" />
                         <path d="M7 11V7a5 5 0 0110 0v4" />
                     </svg>
@@ -797,32 +830,26 @@
             hamburgerBtn.setAttribute('aria-expanded', 'false');
         }
 
-        // Desktop : hover sur le bouton ou la nav
         hamburgerBtn.addEventListener('mouseenter', () => { if (window.innerWidth >= 768) openSidebar(); });
         sidebarNav.addEventListener('mouseleave', () => { if (window.innerWidth >= 768) closeSidebar(); });
 
-        // Mobile : clic sur le hamburger
         hamburgerBtn.addEventListener('click', e => {
             e.stopPropagation();
             _sidebarOpen ? closeSidebar() : openSidebar();
         });
 
-        // Fermer au clic sur l'overlay
         sidebarOvl.addEventListener('click', closeSidebar);
 
-        // Fermer après navigation sur mobile
         document.querySelectorAll('.sidebar-link').forEach(link => {
             link.addEventListener('click', () => {
                 if (window.innerWidth < 768) closeSidebar();
             });
         });
 
-        // Fermer avec Échap
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape' && _sidebarOpen) closeSidebar();
         });
     </script>
 
 </body>
-
 </html>
