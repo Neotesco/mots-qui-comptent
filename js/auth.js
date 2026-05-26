@@ -28,46 +28,20 @@ function _updateAuthUI() {
 
   if (!btnAuth || !label) return;
 
-  // Cherche ou crée l'avatar
-  let avatar = document.getElementById('btn-auth-avatar');
-
-  if (!avatar) {
-    avatar = document.createElement('span');
-    avatar.id = 'btn-auth-avatar';
-
-    avatar.style.display = 'inline-flex';
-    avatar.style.alignItems = 'center';
-    avatar.style.justifyContent = 'center';
-    avatar.style.width = '24px';
-    avatar.style.height = '24px';
-    avatar.style.borderRadius = '50%';
-    avatar.style.fontSize = '12px';
-    avatar.style.fontWeight = '700';
-    avatar.style.marginRight = '10px';
-
-    btnAuth.insertBefore(avatar, label);
-  }
-
   if (_currentUser) {
-    const email = _currentUser.email || '';
-    const initial = email.charAt(0).toUpperCase();
-
-    avatar.textContent = initial;
-    avatar.style.background = 'var(--accent)';
-    avatar.style.color = '#fff';
-
     label.textContent = 'Mon compte';
+    btnAuth.title = _currentUser.email;
 
-    btnAuth.title = email;
-
+    // Style connecté
+    btnAuth.style.background = 'rgba(124, 58, 237, 0.12)';
+    btnAuth.style.color = 'var(--accent)';
   } else {
-    avatar.textContent = '👤';
-    avatar.style.background = 'transparent';
-    avatar.style.color = 'currentColor';
-
     label.textContent = 'Mon compte';
-
     btnAuth.title = 'Se connecter';
+
+    // Style normal
+    btnAuth.style.background = '';
+    btnAuth.style.color = '';
   }
 }
 
