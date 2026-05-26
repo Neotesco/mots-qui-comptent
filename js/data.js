@@ -569,6 +569,24 @@ const ALL_QUOTES = [
     cat: "Philosophie",
     day: 14,
   },
+
+  // ── Jour 15 ──
+  {
+    id: 61,
+    text: "Je t'aime plus que les mots ne peuvent l'exprimer.",
+    textEn: "I love you more than words can say.",
+    author: "Maëlle Baschou",
+    cat: "Amour",
+    day: 15,
+  },
+  {
+    id: 62,
+    text: "Assommé de question, sera t’il le bon pour combler ma passion ?",
+    textEn: "Overwhelmed by questions, will he be the one to satisfy my passion ?",
+    author: "Maëlle Baschou",
+    cat: "Amour",
+    day: 15,
+  },
 ];
 
 // Biographies courtes des auteurs
@@ -768,6 +786,10 @@ const AUTHOR_BIOS = {
   "Jimi Hendrix": {
     bio: "Guitariste, chanteur et compositeur américain, considéré comme l'un des plus grands guitaristes de l'histoire du rock. En seulement quatre ans de carrière, il a révolutionné la façon de jouer de la guitare électrique et laissé une empreinte indélébile sur la musique populaire.",
     years: "1942–1970",
+  },
+  "Maelle Baschou": {
+  years: "2007 — aujourd'hui",
+  bio: "Maëlle Baschou est une jeune femme dont les mots traduisent avec sincérité ce que le cœur ressent. Ses citations, empreintes de tendresse et d'authenticité, rappellent que les plus belles pensées naissent souvent des émotions les plus simples."
   },
 };
 
