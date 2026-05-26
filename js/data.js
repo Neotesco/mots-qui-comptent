@@ -1,7 +1,7 @@
 // ── js/data.js ──
 // Biographies des auteurs.
 
-const AUTHOR_BIOS = {
+var AUTHOR_BIOS = {
   "Albert Einstein": {
     bio: "Physicien théoricien allemand naturalisé américain, Einstein est l'un des plus grands scientifiques de tous les temps. Lauréat du prix Nobel de physique en 1921, il est surtout connu pour sa théorie de la relativité et la formule E=mc². Il était aussi connu pour sa curiosité infinie et sa philosophie de vie humaniste.",
     years: "1879–1955",
