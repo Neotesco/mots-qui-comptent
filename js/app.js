@@ -175,6 +175,13 @@ async function init() {
 
 init();
 
+// ── Polling Supabase — rafraîchissement automatique des scores ────────────────
+// Toutes les 30 secondes, on recharge les scores globaux et on re-rend
+// pour que les votes des autres visiteurs apparaissent sans recharger la page.
+setInterval(() => {
+  loadGlobalScores().then(() => renderAll());
+}, 30000);
+
 // ── Bouton remonter en haut ───────────────────────────────────────────────────
 const _scrollBtn = document.getElementById('scroll-top-btn');
 window.addEventListener('scroll', () => {
