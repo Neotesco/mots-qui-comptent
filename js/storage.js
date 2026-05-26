@@ -46,7 +46,7 @@ function updateStreak(state) {
 // Charger tous les votes du visiteur depuis Supabase au démarrage
 async function loadVotesFromSupabase(state) {
   const userKey = getUserKey();
-  const { data, error } = await supabase
+  const { data, error } = await sbClient
     .from('votes')
     .select('quote_id, value')
     .eq('user_key', userKey);
@@ -95,7 +95,7 @@ async function castVote(state, id, dir) {
 
   // Envoi à Supabase (upsert = insert ou update si déjà existant)
   const userKey = getUserKey();
-  const { error } = await supabase
+  const { error } = await sbClient
     .from('votes')
     .upsert(
       { quote_id: id, user_key: userKey, value: newValue },
@@ -113,7 +113,7 @@ async function castVote(state, id, dir) {
 const _globalScores = {}; // { [quoteId]: totalVotes }
 
 async function loadGlobalScores() {
-  const { data, error } = await supabase
+  const { data, error } = await sbClient
     .from('votes')
     .select('quote_id, value');
 
