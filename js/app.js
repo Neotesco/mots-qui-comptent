@@ -1,18 +1,11 @@
 // ── js/app.js ──
-// Point d'entrée de l'application.
-// Les citations sont chargées depuis Supabase (table published_quotes)
-// au lieu d'être embarquées dans data.js.
-
-// ── État global ───────────────────────────────────────────────────────────────
 let state = loadState();
 updateStreak(state);
 saveState(state);
 
-// Remplace l'ancien tableau statique — sera peuplé depuis Supabase
-let ALL_QUOTES   = [];
-let TOTAL_DAYS   = 0;
+let ALL_QUOTES = [];
+let TOTAL_DAYS = 0;
 
-// ── Chargement des citations depuis Supabase ──────────────────────────────────
 async function loadQuotes() {
   const { data, error } = await sbClient
     .from('published_quotes')
@@ -24,14 +17,12 @@ async function loadQuotes() {
     return;
   }
 
-  // Normalise text_en → textEn pour rester compatible avec le reste du code
-  ALL_QUOTES  = (data || []).map(q => ({ ...q, textEn: q.text_en }));
-  TOTAL_DAYS  = ALL_QUOTES.length
+  ALL_QUOTES = (data || []).map(q => ({ ...q, textEn: q.text_en }));
+  TOTAL_DAYS = ALL_QUOTES.length
     ? Math.max(...ALL_QUOTES.map(q => q.day)) + 1
     : 1;
 }
 
-// ── Calcul du jour courant ────────────────────────────────────────────────────
 function getTodayDayIndex() {
   const EPOCH    = new Date('2025-01-01T00:00:00');
   const now      = new Date();
@@ -44,7 +35,6 @@ function getTodayQuotes() {
   return ALL_QUOTES.filter(q => q.day === idx);
 }
 
-// ── Rendu des onglets ─────────────────────────────────────────────────────────
 function renderToday() {
   const quotes    = getTodayQuotes();
   const container = document.getElementById('today-cards');
@@ -106,7 +96,6 @@ function renderAll() {
   renderStats();
 }
 
-// ── Titres des onglets ────────────────────────────────────────────────────────
 const TAB_TITLES = {
   today:    'Aujourd\'hui',
   top:      'Top classement',
@@ -114,11 +103,11 @@ const TAB_TITLES = {
   explorer: 'Explorer',
   about:    'À propos',
   submit:   'Soumettre une citation',
+  auth:     'Mon compte',
   admin:    'Administration',
 };
 
-// ── Navigation par onglets ────────────────────────────────────────────────────
-const TABS = ['today', 'top', 'stats', 'explorer', 'about', 'submit', 'admin'];
+const TABS = ['today', 'top', 'stats', 'explorer', 'about', 'submit', 'auth', 'admin'];
 
 function showTab(name) {
   TABS.forEach(t => {
@@ -146,11 +135,10 @@ function showTab(name) {
   if (name === 'top')      renderTop();
   if (name === 'stats')    renderStats();
   if (name === 'explorer') renderExplorer();
-  if (name === 'submit') {}
+  if (name === 'auth')     renderAuthPanel();
   if (name === 'admin')    renderAdminPanel();
 }
 
-// ── Gestion du vote ───────────────────────────────────────────────────────────
 function handleVote(quoteId, dir) {
   castVote(state, quoteId, dir).then(() => {
     loadGlobalScores().then(() => renderAll());
@@ -166,7 +154,6 @@ function handleVote(quoteId, dir) {
   Promise.resolve().then(() => renderAll());
 }
 
-// ── Date affichée ─────────────────────────────────────────────────────────────
 function setDisplayDates() {
   const now   = new Date();
   const opts  = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
@@ -177,22 +164,20 @@ function setDisplayDates() {
   document.getElementById('today-label').textContent = short;
 }
 
-// ── Init async ────────────────────────────────────────────────────────────────
 async function init() {
   setDisplayDates();
 
-  // Skeleton / état vide pendant le chargement
   const skeleton = '<div class="empty-state" style="padding:2rem">Chargement…</div>';
   ['today-cards', 'top-cards'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.innerHTML = skeleton;
   });
 
-  // Chargement parallèle : citations + votes + scores
   await Promise.all([
     loadQuotes(),
     loadVotesFromSupabase(state),
     loadGlobalScores(),
+    initAuth(),
   ]);
 
   renderAll();
@@ -200,7 +185,6 @@ async function init() {
 
 init();
 
-// ── Mise à jour silencieuse des scores ────────────────────────────────────────
 function updateScoresSilently() {
   document.querySelectorAll('[data-id]').forEach(card => {
     const id    = parseInt(card.dataset.id);
@@ -222,12 +206,10 @@ function updateScoresSilently() {
   });
 }
 
-// ── Polling Supabase (30 s) ───────────────────────────────────────────────────
 setInterval(() => {
   loadGlobalScores().then(() => updateScoresSilently());
 }, 30000);
 
-// ── Bouton remonter en haut ───────────────────────────────────────────────────
 const _scrollBtn = document.getElementById('scroll-top-btn');
 window.addEventListener('scroll', () => {
   _scrollBtn.classList.toggle('visible', window.scrollY > 300);
