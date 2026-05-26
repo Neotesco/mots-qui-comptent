@@ -131,7 +131,6 @@ async function loadGlobalScores() {
 }
 
 function displayScore(state, quote) {
-  const base       = (quote.id * 13 + quote.day * 7 + 12) % 80 + 10;
   const globalVote = _globalScores[quote.id] || 0;
-  return base + globalVote;
+  return globalVote;
 }
