@@ -1,5 +1,5 @@
 // ── js/admin.js ──
-// Panneau d'administration : publication de nouvelles citations.
+// Panneau d'administration : publication de nouvelles citations directement dans Supabase.
 // Protégé par mot de passe côté client (hash SHA-256).
 
 // ⚠️ Ce hash correspond à ton mot de passe — ne partage jamais le mot de passe lui-même.
@@ -8,24 +8,24 @@ const ADMIN_PASSWORD_HASH = '5ddac91c34cefae85d4734ebefd4412950bab0533f7ddcf21fb
 
 let _adminUnlocked = false;
 
-// ── Vérification du mot de passe (async car SHA-256 est asynchrone) ───────────
+// ── Vérification du mot de passe ─────────────────────────────────────────────
 async function checkAdminPassword() {
   const input   = document.getElementById('admin-password-input').value;
   const errorEl = document.getElementById('admin-password-error');
 
-  // Hasher la saisie avec SHA-256 (API Web Crypto, native dans tous les navigateurs)
   const hashBuffer = await crypto.subtle.digest(
     'SHA-256',
     new TextEncoder().encode(input)
   );
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex   = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  const hashHex = Array.from(new Uint8Array(hashBuffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
 
   if (hashHex === ADMIN_PASSWORD_HASH) {
     _adminUnlocked = true;
     document.getElementById('admin-login-screen').setAttribute('hidden', '');
     document.getElementById('admin-dashboard').removeAttribute('hidden');
-    _showLastDay();
+    _refreshAdminInfo();
   } else {
     errorEl.removeAttribute('hidden');
     errorEl.textContent = 'Mot de passe incorrect.';
@@ -33,16 +33,25 @@ async function checkAdminPassword() {
   }
 }
 
-// ── Affiche le dernier jour utilisé dans data.js ──────────────────────────────
-function _showLastDay() {
-  const lastDay = Math.max(...ALL_QUOTES.map(q => q.day));
-  const lastId  = Math.max(...ALL_QUOTES.map(q => q.id));
+// ── Infos courantes (dernier id/jour depuis Supabase) ─────────────────────────
+async function _refreshAdminInfo() {
+  const { data, error } = await sbClient
+    .from('published_quotes')
+    .select('id, day')
+    .order('id', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (error || !data) {
+    document.getElementById('admin-last-day').textContent = 'aucune citation publiée';
+    return;
+  }
   document.getElementById('admin-last-day').textContent =
-    `jour ${lastDay} · prochain ID : ${lastId + 1}`;
+    `jour ${data.day} · dernier ID : ${data.id} · prochain ID : ${data.id + 1}`;
 }
 
-// ── Génération du bloc data.js ────────────────────────────────────────────────
-function handleAdminPublish() {
+// ── Publication directe dans Supabase ─────────────────────────────────────────
+async function handleAdminPublish() {
   const text   = document.getElementById('admin-input-text').value.trim();
   const textEn = document.getElementById('admin-input-text-en').value.trim();
   const author = document.getElementById('admin-input-author').value.trim();
@@ -50,36 +59,72 @@ function handleAdminPublish() {
   const cat    = document.getElementById('admin-input-cat').value;
   const day    = document.getElementById('admin-input-day').value;
 
-  const errorEl = document.getElementById('admin-publish-error');
-
   // Validation
   if (!text)            return _showAdminError('Veuillez saisir le texte de la citation.');
   if (text.length < 10) return _showAdminError('La citation doit faire au moins 10 caractères.');
   if (!author)          return _showAdminError("Veuillez indiquer le nom de l'auteur.");
   if (!cat)             return _showAdminError('Veuillez choisir une catégorie.');
-  if (day === '')       return _showAdminError('Veuillez indiquer le jour d\'affichage.');
+  if (day === '')       return _showAdminError("Veuillez indiquer le jour d'affichage.");
 
-  errorEl.setAttribute('hidden', '');
+  document.getElementById('admin-publish-error').setAttribute('hidden', '');
 
-  const nextId  = Math.max(...ALL_QUOTES.map(q => q.id)) + 1;
-  const dayNum  = parseInt(day, 10);
+  // Récupère le prochain id
+  const { data: last } = await sbClient
+    .from('published_quotes')
+    .select('id')
+    .order('id', { ascending: false })
+    .limit(1)
+    .single();
 
-  // Génère le bloc formaté
-  const lines = [`  {`];
-  lines.push(`    id: ${nextId},`);
-  lines.push(`    text: ${JSON.stringify(text)},`);
-  if (textEn) lines.push(`    textEn: ${JSON.stringify(textEn)},`);
-  lines.push(`    author: ${JSON.stringify(author)},`);
-  if (era) lines.push(`    era: ${JSON.stringify(era)},`);
-  lines.push(`    cat: ${JSON.stringify(cat)},`);
-  lines.push(`    day: ${dayNum},`);
-  lines.push(`  },`);
+  const nextId = last ? last.id + 1 : 1;
 
-  const code = lines.join('\n');
+  // Construction de l'objet à insérer
+  const row = {
+    id:     nextId,
+    text,
+    author,
+    era:    era || null,
+    cat,
+    day:    parseInt(day, 10),
+  };
+  if (textEn) row.text_en = textEn;
 
-  document.getElementById('admin-code-output').textContent = code;
+  // Affichage de l'état de chargement
+  _setPublishBtnLoading(true);
+
+  const { error } = await sbClient
+    .from('published_quotes')
+    .insert(row);
+
+  _setPublishBtnLoading(false);
+
+  if (error) {
+    _showAdminError(`Erreur Supabase : ${error.message}`);
+    return;
+  }
+
+  // Succès : afficher le résumé
   document.getElementById('admin-publish-form').setAttribute('hidden', '');
   document.getElementById('admin-publish-result').removeAttribute('hidden');
+
+  // Affiche le bloc de confirmation avec les données insérées
+  document.getElementById('admin-code-output').textContent =
+    `✅ Citation #${nextId} publiée avec succès !\n\n` +
+    `Auteur : ${author}\n` +
+    `Catégorie : ${cat}\n` +
+    `Jour : ${day}\n` +
+    (textEn ? `Traduction EN : ${textEn.slice(0, 60)}…\n` : '') +
+    `\nElle apparaîtra sur le site dès le prochain rechargement.`;
+
+  // Recharge ALL_QUOTES en arrière-plan pour que la preview soit à jour
+  if (typeof loadQuotes === 'function') loadQuotes().then(() => renderAll());
+}
+
+function _setPublishBtnLoading(loading) {
+  const btn = document.querySelector('#admin-publish-form button[onclick="handleAdminPublish()"]');
+  if (!btn) return;
+  btn.disabled    = loading;
+  btn.textContent = loading ? 'Publication…' : 'Publier dans Supabase';
 }
 
 function _showAdminError(msg) {
@@ -89,19 +134,29 @@ function _showAdminError(msg) {
   el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-// ── Copier le code ────────────────────────────────────────────────────────────
-function adminCopyCode() {
-  const code = document.getElementById('admin-code-output').textContent;
-  navigator.clipboard.writeText(code).then(() => {
-    const btn = document.getElementById('admin-copy-btn');
-    btn.textContent = '✓ Copié !';
-    setTimeout(() => btn.textContent = 'Copier', 2000);
-  }).catch(() => {
-    showToast('Impossible de copier automatiquement.');
-  });
+// ── Suppression d'une citation (optionnel) ────────────────────────────────────
+async function adminDeleteQuote(id) {
+  showConfirmModal(
+    'Supprimer cette citation ?',
+    `La citation #${id} sera définitivement supprimée de Supabase.`,
+    async () => {
+      const { error } = await sbClient
+        .from('published_quotes')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        showToast(`Erreur : ${error.message}`);
+        return;
+      }
+      showToast(`Citation #${id} supprimée.`);
+      if (typeof loadQuotes === 'function') loadQuotes().then(() => renderAll());
+      _refreshAdminInfo();
+    }
+  );
 }
 
-// ── Réinitialiser ─────────────────────────────────────────────────────────────
+// ── Réinitialiser le formulaire ───────────────────────────────────────────────
 function resetAdminPublishForm() {
   document.getElementById('admin-input-text').value    = '';
   document.getElementById('admin-input-text-en').value = '';
@@ -113,7 +168,7 @@ function resetAdminPublishForm() {
   document.getElementById('admin-publish-error').setAttribute('hidden', '');
   document.getElementById('admin-publish-result').setAttribute('hidden', '');
   document.getElementById('admin-publish-form').removeAttribute('hidden');
-  _showLastDay();
+  _refreshAdminInfo();
 }
 
 // ── Déconnexion ───────────────────────────────────────────────────────────────
@@ -135,7 +190,7 @@ function renderAdminPanel() {
   }
 }
 
-// Soumettre avec Entrée sur le champ mot de passe
+// Soumettre avec Entrée
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && document.activeElement?.id === 'admin-password-input') {
     checkAdminPassword();
