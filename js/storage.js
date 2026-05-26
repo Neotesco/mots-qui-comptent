@@ -73,20 +73,25 @@ function getVote(state, id) {
 
 // Enregistrer un vote (toggle si même direction) — local + Supabase
 async function castVote(state, id, dir) {
-  const prev  = getVote(state, id);
-  const isNew = prev === null;
+  const prev    = getVote(state, id);
+  const prevRaw = state.votes[id] || 0;
   let newValue;
 
   if (prev === dir) {
     newValue = 0; // annuler
   } else {
     newValue = dir === 'up' ? 1 : -1;
-    if (isNew) state.totalVotes += 1;
+    if (prev === null) state.totalVotes += 1;
   }
 
   // Mise à jour cache local immédiate (UX réactive)
   state.votes[id] = newValue;
   saveState(state);
+
+  // Mise à jour optimiste de _globalScores pour que displayScore soit correct immédiatement,
+  // sans attendre la réponse Supabase
+  const delta = newValue - prevRaw;
+  _globalScores[id] = (_globalScores[id] || 0) + delta;
 
   // Envoi à Supabase (upsert = insert ou update si déjà existant)
   const userKey = getUserKey();
@@ -126,6 +131,7 @@ async function loadGlobalScores() {
 }
 
 function displayScore(state, quote) {
+  const base       = (quote.id * 13 + quote.day * 7 + 12) % 80 + 10;
   const globalVote = _globalScores[quote.id] || 0;
-  return globalVote;
+  return base + globalVote;
 }
