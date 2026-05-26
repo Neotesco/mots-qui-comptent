@@ -175,11 +175,36 @@ async function init() {
 
 init();
 
+// ── Mise à jour silencieuse des scores (sans reconstruire le DOM) ────────────
+function updateScoresSilently() {
+  // Met à jour uniquement les chiffres visibles dans les boutons de vote
+  // sans reconstruire les cartes — pas de flash, pas de perte de focus
+  document.querySelectorAll('[data-id]').forEach(card => {
+    const id    = parseInt(card.dataset.id);
+    const quote = ALL_QUOTES.find(q => q.id === id);
+    if (!quote) return;
+
+    const score   = displayScore(state, quote);
+    const upBtn   = card.querySelector('.vote-btn:first-child, .vote-btn');
+    const topScore = card.querySelector('.top-score');
+
+    if (upBtn && upBtn.childNodes.length) {
+      // Remplace le noeud texte du score (dernier enfant du bouton)
+      const textNode = [...upBtn.childNodes].find(n => n.nodeType === 3);
+      if (textNode) textNode.textContent = ' ' + score;
+    }
+    if (topScore) {
+      const textNode = [...topScore.childNodes].find(n => n.nodeType === 3);
+      if (textNode) textNode.textContent = ' ' + score + ' votes';
+    }
+  });
+}
+
 // ── Polling Supabase — rafraîchissement automatique des scores ────────────────
-// Toutes les 30 secondes, on recharge les scores globaux et on re-rend
-// pour que les votes des autres visiteurs apparaissent sans recharger la page.
+// Toutes les 30 secondes, on recharge les scores depuis Supabase
+// et on met à jour uniquement les chiffres, sans reconstruire les cartes.
 setInterval(() => {
-  loadGlobalScores().then(() => renderAll());
+  loadGlobalScores().then(() => updateScoresSilently());
 }, 30000);
 
 // ── Bouton remonter en haut ───────────────────────────────────────────────────
