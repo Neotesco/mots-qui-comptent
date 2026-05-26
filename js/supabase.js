@@ -3,10 +3,9 @@ const SUPABASE_URL = 'https://izswmkpkijkshicvhrhv.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_mTdGX2PCaORZnEoBzOp5rg_jA34zrGz';
 
 // Client public (votes)
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-
-// Alias admin (plus de clé secrète nécessaire)
-const supabaseAdmin = supabase;
+// On utilise "sbClient" pour éviter le conflit avec window.supabase exposé par le CDN
+const sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+const supabaseAdmin = sbClient;
 
 function getUserKey() {
   let key = localStorage.getItem('user_key');
