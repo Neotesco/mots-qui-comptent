@@ -11,8 +11,6 @@ saveState(state);
 // Remplace l'ancien tableau statique — sera peuplé depuis Supabase
 let ALL_QUOTES   = [];
 let TOTAL_DAYS   = 0;
-let AUTHOR_BIOS  = {}; // reste vide ; on n'affiche plus les bios depuis data.js
-                       // (si tu veux les conserver, garde data.js chargé en parallèle)
 
 // ── Chargement des citations depuis Supabase ──────────────────────────────────
 async function loadQuotes() {
