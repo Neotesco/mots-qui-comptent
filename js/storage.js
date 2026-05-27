@@ -41,11 +41,27 @@ function updateStreak(state) {
   state.lastVisit = today;
 }
 
+// ── Clé utilisateur : uid si connecté, sinon clé anonyme ─────────────────────
+function getUserKey() {
+  // Si l'utilisateur est connecté via Supabase Auth, on utilise son uid
+  if (typeof _currentUser !== 'undefined' && _currentUser?.id) {
+    return _currentUser.id;
+  }
+  // Sinon, clé anonyme persistée en localStorage
+  let key = localStorage.getItem('user_key');
+  if (!key) {
+    key = 'u_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem('user_key', key);
+  }
+  return key;
+}
+
 // ── Votes via Supabase ────────────────────────────────────────────────────────
 
 // Charger tous les votes du visiteur depuis Supabase au démarrage
 async function loadVotesFromSupabase(state) {
   const userKey = getUserKey();
+
   const { data, error } = await sbClient
     .from('votes')
     .select('quote_id, value')
@@ -56,7 +72,8 @@ async function loadVotesFromSupabase(state) {
     return;
   }
 
-  // Remplir le cache local
+  // Réinitialiser le cache local et le remplir avec les votes Supabase
+  state.votes = {};
   (data || []).forEach(row => {
     state.votes[row.quote_id] = row.value;
   });
@@ -88,8 +105,7 @@ async function castVote(state, id, dir) {
   state.votes[id] = newValue;
   saveState(state);
 
-  // Mise à jour optimiste de _globalScores pour que displayScore soit correct immédiatement,
-  // sans attendre la réponse Supabase
+  // Mise à jour optimiste de _globalScores
   const delta = newValue - prevRaw;
   _globalScores[id] = (_globalScores[id] || 0) + delta;
 
@@ -105,11 +121,7 @@ async function castVote(state, id, dir) {
   if (error) console.warn('Erreur vote Supabase :', error.message);
 }
 
-// ── Score affiché ─────────────────────────────────────────────────────────────
-// Score global = base pseudo-aléatoire + somme de tous les votes Supabase
-// Pour simplifier, on garde le score de base + le vote local en cache.
-// Les scores globaux sont chargés séparément via loadGlobalScores().
-
+// ── Score global ──────────────────────────────────────────────────────────────
 const _globalScores = {}; // { [quoteId]: totalVotes }
 
 async function loadGlobalScores() {
@@ -131,6 +143,5 @@ async function loadGlobalScores() {
 }
 
 function displayScore(state, quote) {
-  const globalVote = _globalScores[quote.id] || 0;
-  return globalVote;
+  return _globalScores[quote.id] || 0;
 }
