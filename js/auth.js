@@ -178,8 +178,28 @@ function renderAuthPanel() {
     panel.removeAttribute('hidden');
     formPanel.setAttribute('hidden', '');
     document.getElementById('auth-user-email').textContent = _currentUser.email;
+
+    // Compter les citations likées depuis le cache local
+    const likedCount = Object.values(state.votes).filter(v => v === 1).length;
+    document.getElementById('auth-likes-count').textContent = likedCount;
+
+    // Compter les citations soumises depuis Supabase
+    sbClient
+      .from('pending_quotes')
+      .select('*', { count: 'exact', head: true })
+      .then(({ count, error }) => {
+        if (!error) {
+          document.getElementById('auth-submissions-count').textContent = count ?? '0';
+        }
+      });
+
   } else {
     panel.setAttribute('hidden', '');
     formPanel.removeAttribute('hidden');
+    // Remettre les tirets quand déconnecté
+    const lk = document.getElementById('auth-likes-count');
+    const sb = document.getElementById('auth-submissions-count');
+    if (lk) lk.textContent = '—';
+    if (sb) sb.textContent = '—';
   }
 }
