@@ -65,7 +65,7 @@ function renderStats() {
   document.getElementById('s-streak').textContent = state.streak;
 
   const likedCats = ALL_QUOTES
-    .filter(q => state.votes[q.id] === 1)
+    .filter(q => state.votes[q.id] === 1 || state.votes[String(q.id)] === 1)
     .map(q => q.cat);
 
   if (likedCats.length) {
@@ -78,7 +78,7 @@ function renderStats() {
     document.getElementById('s-fav').textContent = '—';
   }
 
-  const liked = ALL_QUOTES.filter(q => state.votes[q.id] === 1);
+  const liked = ALL_QUOTES.filter(q => state.votes[q.id] === 1 || state.votes[String(q.id)] === 1);
   const likedContainer = document.getElementById('liked-cards');
 
   if (liked.length) {
