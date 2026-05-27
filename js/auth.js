@@ -13,6 +13,14 @@ async function initAuth() {
   sbClient.auth.onAuthStateChange((_event, session) => {
     _currentUser = session?.user || null;
     _updateAuthUI();
+
+    // Recharger les votes avec le bon user_key (uid ou anonyme)
+    if (typeof state !== 'undefined') {
+      state.votes = {};
+      loadVotesFromSupabase(state).then(() => {
+        loadGlobalScores().then(() => renderAll());
+      });
+    }
   });
 }
 
@@ -99,6 +107,15 @@ async function handleSignOut() {
   await sbClient.auth.signOut();
   _currentUser = null;
   _updateAuthUI();
+
+  // Recharger les votes avec la clé anonyme
+  if (typeof state !== 'undefined') {
+    state.votes = {};
+    loadVotesFromSupabase(state).then(() => {
+      loadGlobalScores().then(() => renderAll());
+    });
+  }
+
   showTab('today');
   showToast('Déconnecté.');
 }
