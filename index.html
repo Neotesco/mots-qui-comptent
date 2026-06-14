@@ -22,6 +22,11 @@
     <meta name="twitter:title" content="Les mots qui comptent" />
     <meta name="twitter:description" content="Des citations inspirantes chaque jour — votez pour vos préférées." />
 
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#4A3F8F" />
+    <link rel="apple-touch-icon" href="/icon-192x192.png" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -45,6 +50,12 @@
     <polyline points="18 15 12 9 6 15"/>
   </svg>
 </button>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+  }
+</script>
 
 <body>
 
