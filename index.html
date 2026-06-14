@@ -43,25 +43,20 @@
     <link rel="stylesheet" href="css/animations.css" />
 </head>
 
-<button
-  class="scroll-top-btn"
-  id="scroll-top-btn"
-  onclick="window.scrollTo({top:0,behavior:'smooth'})"
-  aria-label="Remonter en haut"
-  title="Remonter en haut"
->
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-    <polyline points="18 15 12 9 6 15"/>
-  </svg>
-</button>
-
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js');
-  }
-</script>
-
 <body>
+
+    <!-- ── Bouton remonter en haut ── -->
+    <button
+        class="scroll-top-btn"
+        id="scroll-top-btn"
+        onclick="window.scrollTo({top:0,behavior:'smooth'})"
+        aria-label="Remonter en haut"
+        title="Remonter en haut"
+    >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <polyline points="18 15 12 9 6 15"/>
+        </svg>
+    </button>
 
     <!-- ── Header ── -->
     <header class="site-header">
@@ -93,6 +88,23 @@
 
     <!-- ── Main content ── -->
     <main class="content">
+
+        <!-- Tab : Aujourd'hui -->
+        <section id="tab-today" role="tabpanel" aria-labelledby="btn-today">
+            <div class="explorer-top-row">
+                <p class="section-label" style="margin-bottom:0">Citations du <span id="today-label"></span></p>
+                <button class="surprise-btn" onclick="openSurpriseModal()" aria-label="Citation aléatoire">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <polyline points="16 3 21 3 21 8" />
+                        <line x1="4" y1="20" x2="21" y2="3" />
+                        <polyline points="21 16 21 21 16 21" />
+                        <line x1="15" y1="15" x2="21" y2="21" />
+                    </svg>
+                    Surprenez-moi
+                </button>
+            </div>
+            <div id="today-cards" class="cards-list"></div>
+        </section>
 
         <!-- Tab : Explorer -->
         <section id="tab-explorer" role="tabpanel" aria-labelledby="btn-explorer" hidden>
@@ -152,23 +164,6 @@
             </div>
 
             <div id="explorer-cards" class="cards-list"></div>
-        </section>
-
-        <!-- Tab : Aujourd'hui -->
-        <section id="tab-today" role="tabpanel" aria-labelledby="btn-today">
-            <div class="explorer-top-row">
-                <p class="section-label" style="margin-bottom:0">Citations du <span id="today-label"></span></p>
-                <button class="surprise-btn" onclick="openSurpriseModal()" aria-label="Citation aléatoire">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <polyline points="16 3 21 3 21 8" />
-                        <line x1="4" y1="20" x2="21" y2="3" />
-                        <polyline points="21 16 21 21 16 21" />
-                        <line x1="15" y1="15" x2="21" y2="21" />
-                    </svg>
-                    Surprenez-moi
-                </button>
-            </div>
-            <div id="today-cards" class="cards-list"></div>
         </section>
 
         <!-- Tab : Top classement -->
@@ -275,10 +270,9 @@
             </div>
         </section>
 
-        <!-- Tab : Connexion / Mon compte ──────────────────────────────────── -->
+        <!-- Tab : Connexion / Mon compte -->
         <section id="tab-auth" role="tabpanel" aria-labelledby="btn-auth" hidden>
 
-            <!-- Formulaire connexion / inscription -->
             <div id="auth-form-panel">
                 <div style="max-width:380px;margin:2rem auto">
 
@@ -301,7 +295,6 @@
                     <div id="auth-error" class="submit-error" hidden></div>
                     <div id="auth-success" style="color:#16a34a;font-size:14px;margin-bottom:.75rem" hidden></div>
 
-                    <!-- Section connexion -->
                     <div id="auth-signin-section">
                         <button id="auth-btn-signin" class="submit-btn" style="width:100%;margin-bottom:.75rem"
                             onclick="handleSignIn()">
@@ -320,7 +313,6 @@
                         </p>
                     </div>
 
-                    <!-- Section inscription (cachée par défaut) -->
                     <div id="auth-signup-section" hidden>
                         <button id="auth-btn-signup" class="submit-btn" style="width:100%;margin-bottom:.75rem"
                             onclick="handleSignUp()">
@@ -338,7 +330,6 @@
                 </div>
             </div>
 
-            <!-- Panel utilisateur connecté -->
             <div id="auth-user-panel" hidden>
                 <div style="max-width:380px;margin:2rem auto;text-align:center">
                     <div style="font-size:48px;margin-bottom:1rem">✅</div>
@@ -370,7 +361,7 @@
 
         </section>
 
-        <!-- Tab : Admin ──────────────────────────────────────────────────── -->
+        <!-- Tab : Admin -->
         <section id="tab-admin" role="tabpanel" aria-labelledby="btn-admin" hidden>
 
             <div id="admin-login-screen">
@@ -388,7 +379,6 @@
             </div>
 
             <div id="admin-dashboard" hidden>
-                <!-- Citations en attente -->
                 <div style="margin-bottom:2rem">
                     <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:1rem">
                         <p class="section-label" style="margin-bottom:0">Citations en attente</p>
@@ -875,6 +865,13 @@
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape' && _sidebarOpen) closeSidebar();
         });
+    </script>
+
+    <!-- ── Service Worker PWA ── -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+        }
     </script>
 
 </body>
