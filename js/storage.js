@@ -1,7 +1,7 @@
 // ── js/storage.js ──
 // Gestion de la persistance : votes via Supabase, stats locales en localStorage.
 
-const STORAGE_KEY = 'citations_app_v1';
+const STORAGE_KEY = 'citations_app_v2';
 
 // ── État local (streak, stats) ────────────────────────────────────────────────
 function defaultState() {
