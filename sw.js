@@ -1,5 +1,5 @@
 // ── sw.js — Service Worker ──
-const CACHE_NAME = 'mots-qui-comptent-v3';
+const CACHE_NAME = 'mots-qui-comptent-v4';
 
 // Fichiers à mettre en cache pour le mode hors-ligne
 const STATIC_ASSETS = [
