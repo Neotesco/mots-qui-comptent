@@ -1,6 +1,15 @@
 // ── js/render.js ──
 // Fonctions pures qui génèrent du HTML à partir des données.
 
+// ── Échappement HTML ─────────────────────────────────────────────────────────
+// À appliquer sur TOUTE donnée venant de Supabase avant injection innerHTML.
+// Évite les injections XSS si une citation contient du HTML malveillant.
+const _escEl = document.createElement('div');
+function esc(str) {
+  _escEl.textContent = str ?? '';
+  return _escEl.innerHTML;
+}
+
 // ── Icônes SVG inline ────────────────────────────────────────────────────────
 const ICON = {
   thumbUp:   `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/><path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>`,
@@ -15,27 +24,32 @@ const ICON = {
 
 // ── Quote card (onglet "Aujourd'hui" et Stats) ───────────────────────────────
 function renderQuoteCard(quote, state, featured = false) {
-  const vote  = getVote(state, quote.id);
-  const score = displayScore(state, quote);
-  const hasEn = !!quote.textEn;
+  const vote       = getVote(state, quote.id);
+  const score      = displayScore(state, quote);
+  const hasEn      = !!quote.textEn;
+  // Données Supabase échappées — sûres pour innerHTML
+  const safeText   = esc(quote.text);
+  const safeAuthor = esc(quote.author);
+  const safeEra    = esc(quote.era);
+  const safeCat    = esc(quote.cat);
 
   return `
     <article class="quote-card${featured ? ' featured' : ''}" data-id="${quote.id}">
       <div class="quote-card-top">
-        <span class="category-tag">${quote.cat}</span>
+        <span class="category-tag">${safeCat}</span>
         <div class="quote-card-actions">
           ${hasEn ? `<button class="icon-btn lang-toggle" onclick="toggleLang(this)" data-fr="${encodeURIComponent(quote.text)}" data-en="${encodeURIComponent(quote.textEn)}" title="Voir en anglais" aria-label="Basculer la langue">${ICON.translate} <span class="lang-label">EN</span></button>` : ''}
           <button class="icon-btn share-btn" onclick="shareQuote(${quote.id})" title="Partager" aria-label="Partager cette citation">${ICON.share}</button>
           <button class="icon-btn" onclick="openImageModal(${quote.id})" title="Créer une image" aria-label="Créer une image à partager">${ICON.image}</button>
         </div>
       </div>
-      <p class="quote-text" data-quote-text>${quote.text}</p>
+      <p class="quote-text" data-quote-text>${safeText}</p>
       <footer class="quote-footer">
         <div>
-          <button class="author-link" onclick="openAuthorPanel('${quote.author.replace(/'/g, "\\'")}', this)">
-            <p class="quote-author-name">${quote.author}</p>
+          <button class="author-link" onclick="openAuthorPanel('${safeAuthor.replace(/'/g, "\\'")}', this)">
+            <p class="quote-author-name">${safeAuthor}</p>
           </button>
-          <p class="quote-author-era">${quote.era}</p>
+          <p class="quote-author-era">${safeEra}</p>
         </div>
         <div class="vote-row" role="group" aria-label="Voter pour cette citation">
           <button
@@ -57,22 +71,26 @@ function renderQuoteCard(quote, state, featured = false) {
 
 // ── Top card ─────────────────────────────────────────────────────────────────
 function renderTopCard(quote, rank, state) {
-  const score     = displayScore(state, quote);
-  const rankClass = rank <= 3 ? `rank-${rank}` : 'rank-n';
-  const label     = rank <= 3 ? ['🥇','🥈','🥉'][rank - 1] : rank;
-  const hasEn     = !!quote.textEn;
+  const score      = displayScore(state, quote);
+  const rankClass  = rank <= 3 ? `rank-${rank}` : 'rank-n';
+  const label      = rank <= 3 ? ['🥇','🥈','🥉'][rank - 1] : rank;
+  const hasEn      = !!quote.textEn;
+  // Données Supabase échappées
+  const safeText   = esc(quote.text);
+  const safeAuthor = esc(quote.author);
+  const safeCat    = esc(quote.cat);
 
   return `
     <article class="top-card" data-id="${quote.id}">
       <div class="rank-badge ${rankClass}" aria-label="Rang ${rank}">${label}</div>
       <div class="top-card-body">
-        <p class="top-quote-text" data-quote-text>${quote.text}</p>
+        <p class="top-quote-text" data-quote-text>${safeText}</p>
         <div class="top-meta">
           <span class="top-author">
-            <button class="author-link" onclick="openAuthorPanel('${quote.author.replace(/'/g, "\\'")}', this)">
-              ${quote.author}
+            <button class="author-link" onclick="openAuthorPanel('${safeAuthor.replace(/'/g, "\\'")}', this)">
+              ${safeAuthor}
             </button>
-            &nbsp;<span class="category-tag" style="font-size:10px">${quote.cat}</span>
+            &nbsp;<span class="category-tag" style="font-size:10px">${safeCat}</span>
           </span>
           <div class="top-card-actions">
             <span class="top-score">${ICON.thumbUp} ${score} votes</span>
