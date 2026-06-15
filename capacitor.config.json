@@ -1,0 +1,9 @@
+{
+  "appId": "dev.motsquicomptent.app",
+  "appName": "Les mots qui comptent",
+  "webDir": "www",
+  "server": {
+    "url": "https://mots-qui-comptent.pages.dev",
+    "cleartext": false
+  }
+}
