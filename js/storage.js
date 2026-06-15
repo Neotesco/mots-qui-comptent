@@ -122,23 +122,25 @@ async function castVote(state, id, dir) {
 }
 
 // ── Score global ──────────────────────────────────────────────────────────────
-const _globalScores = {}; // { [quoteId]: totalVotes }
+const _globalScores = {}; // { [quoteId]: score agrégé }
 
+// Charge les scores depuis la vue SQL quote_scores (SUM côté serveur).
+// Requête O(nb citations) au lieu de O(nb votes total) — beaucoup plus léger.
 async function loadGlobalScores() {
   const { data, error } = await sbClient
-    .from('votes')
-    .select('quote_id, value');
+    .from('quote_scores')
+    .select('quote_id, score');
 
   if (error) {
     console.warn('Erreur chargement scores :', error.message);
     return;
   }
 
-  // Réinitialiser
+  // Réinitialiser puis remplir depuis les agrégats
   Object.keys(_globalScores).forEach(k => delete _globalScores[k]);
 
   (data || []).forEach(row => {
-    _globalScores[row.quote_id] = (_globalScores[row.quote_id] || 0) + row.value;
+    _globalScores[row.quote_id] = row.score ?? 0;
   });
 }
 
