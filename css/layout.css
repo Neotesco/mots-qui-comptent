@@ -284,6 +284,55 @@
     line-height: 1;
 }
 
+/* ── Skeleton loader ── */
+@keyframes sk-shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position:  400px 0; }
+}
+
+.skeleton-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-card);
+}
+
+.skeleton-line {
+    height: 13px;
+    border-radius: var(--radius-full);
+    margin-bottom: 10px;
+    background: linear-gradient(
+        90deg,
+        var(--bg-subtle) 25%,
+        var(--bg-muted)  50%,
+        var(--bg-subtle) 75%
+    );
+    background-size: 800px 100%;
+    animation: sk-shimmer 1.4s ease-in-out infinite;
+}
+
+.sk-short  { width: 30%; }
+.sk-medium { width: 55%; }
+.sk-long   { width: 90%; }
+.sk-author { width: 38%; }
+.sk-score  { width: 18%; }
+
+.skeleton-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+.skeleton-footer .skeleton-line {
+    margin-bottom: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skeleton-line { animation: none; }
+}
+
 /* ── Empty state ── */
 .empty-state {
     text-align: center;
