@@ -109,7 +109,7 @@ const TAB_TITLES = {
 
 const TABS = ['today', 'top', 'stats', 'explorer', 'about', 'submit', 'auth', 'admin'];
 
-function showTab(name) {
+function showTab(name, pushHistory = true) {
   TABS.forEach(t => {
     const panel = document.getElementById(`tab-${t}`);
     const btn   = document.getElementById(`btn-${t}`);
@@ -129,6 +129,12 @@ function showTab(name) {
     ? `${label} — Les mots qui comptent`
     : 'Les mots qui comptent';
 
+  // ── Routing URL : met à jour le hash sans recharger la page ────────────────
+  const hash = name === 'today' ? '' : `#${name}`;
+  if (pushHistory) {
+    history.pushState({ tab: name }, document.title, hash || window.location.pathname);
+  }
+
   if (typeof closeSidebar === 'function') closeSidebar();
 
   if (name === 'today')    renderToday();
@@ -137,6 +143,18 @@ function showTab(name) {
   if (name === 'explorer') renderExplorer();
   if (name === 'auth')     renderAuthPanel();
   if (name === 'admin')    renderAdminPanel();
+}
+
+// Bouton Retour / Avant du navigateur
+window.addEventListener('popstate', (e) => {
+  const tab = e.state?.tab || _getTabFromHash();
+  showTab(tab, false); // false = ne pas re-pousser dans l'historique
+});
+
+// Déduit l'onglet à afficher depuis le hash de l'URL (#explorer, #top…)
+function _getTabFromHash() {
+  const hash = window.location.hash.replace('#', '');
+  return TABS.includes(hash) ? hash : 'today';
 }
 
 function handleVote(quoteId, dir) {
@@ -180,7 +198,10 @@ async function init() {
     initAuth(),
   ]);
 
-  renderAll();
+  // Ouvrir l'onglet correspondant au hash de l'URL (ex : #explorer)
+  // pushHistory=false : on ne duplique pas l'entrée dans l'historique
+  const initialTab = _getTabFromHash();
+  showTab(initialTab, false);
 }
 
 init();
