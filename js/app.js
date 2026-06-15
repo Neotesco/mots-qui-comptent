@@ -167,10 +167,10 @@ function setDisplayDates() {
 async function init() {
   setDisplayDates();
 
-  const skeleton = '<div class="empty-state" style="padding:2rem">Chargement…</div>';
-  ['today-cards', 'top-cards'].forEach(id => {
+  // Skeletons animés sur tous les conteneurs de cartes visibles au démarrage
+  ['today-cards', 'top-cards', 'liked-cards'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.innerHTML = skeleton;
+    if (el) el.innerHTML = renderSkeleton(3);
   });
 
   await Promise.all([
