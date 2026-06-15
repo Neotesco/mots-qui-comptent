@@ -110,3 +110,21 @@ function renderEmpty(message) {
       ${message}
     </div>`;
 }
+
+// ── Skeleton loader ───────────────────────────────────────────────────────────
+// Génère N cartes fantômes animées pour indiquer le chargement.
+// Utiliser avant tout fetch, remplacer par le vrai contenu une fois chargé.
+function renderSkeleton(count = 3) {
+  return Array.from({ length: count }, () => `
+    <div class="skeleton-card" aria-hidden="true">
+      <div class="skeleton-line sk-short"></div>
+      <div class="skeleton-line sk-long"></div>
+      <div class="skeleton-line sk-long"></div>
+      <div class="skeleton-line sk-medium"></div>
+      <div class="skeleton-footer">
+        <div class="skeleton-line sk-author"></div>
+        <div class="skeleton-line sk-score"></div>
+      </div>
+    </div>`
+  ).join('');
+}
